@@ -91,7 +91,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 obSecureText: false,
                 name: "Your Age",
                 lable: "Age",
-                hintText: "Year",
+                hintText: "Years",
                 type: TextInputType.number,
                 icon: Icon(Icons.calendar_month, color: Colors.white),
                 controller: age,
@@ -149,7 +149,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   );
 
                   if (!strongPasswordRegex.hasMatch(value)) {
-                    return 'Use at least 8 characters with uppercase, lowercase, number, and special character';
+                    return 'Use at least 8 characters with\n uppercase,\n lowercase,\n number,\n and special character';
                   }
 
                   return null; //  Strong

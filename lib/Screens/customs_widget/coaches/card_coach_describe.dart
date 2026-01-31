@@ -1,3 +1,4 @@
+import 'package:buhairi_academy_application/Customs/BeautifulProfileCard.dart';
 import 'package:buhairi_academy_application/Customs/Colors.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/coaches/model_coach.dart';
 import 'package:buhairi_academy_application/Screens/introduction/splash_screen.dart';
@@ -15,17 +16,18 @@ class CardCoachDescribe extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.asset(modelCoach.urlImage,
-              height: MediaQuery.of(context).size.height * 0.35,
-              width: MediaQuery.of(context).size.width,),
-              SizedBox(height: 10,),
-              Text(modelCoach.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
-              SizedBox(height: 10,),
-              Text(modelCoach.describe, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
-            ],
-          ),
+          child: BeautifulProfileCard(name: modelCoach.name, description: modelCoach.describe,imageUrl: modelCoach.urlImage,),
+          // child: Column(
+          //   children: [
+          //     Image.asset(modelCoach.urlImage,
+          //     height: MediaQuery.of(context).size.height * 0.35,
+          //     width: MediaQuery.of(context).size.width,),
+          //     SizedBox(height: 10,),
+          //     Text(modelCoach.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+          //     SizedBox(height: 10,),
+          //     Text(modelCoach.describe, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
+          //   ],
+          // ),
         ),
       ),
     );

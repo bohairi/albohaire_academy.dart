@@ -13,17 +13,25 @@ class AchievementsDescribe extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Image.asset(modelAchievement.urlImage,
-              height: MediaQuery.of(context).size.height * 0.35,
-              width: MediaQuery.of(context).size.width,
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  Image.asset(modelAchievement.urlImage,
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  width: MediaQuery.of(context).size.width,
+                  ),
+                  SizedBox(height: 10,),
+                  Text(modelAchievement.title,style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                  SizedBox(height: 10,),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(modelAchievement.describe,style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.grey.shade800),),
+                  )
+                ],
               ),
-              SizedBox(height: 10,),
-              Text(modelAchievement.title,style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-              SizedBox(height: 10,),
-              Text(modelAchievement.describe,style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),)
-            ],
+            ),
           ),
         ),
       ),

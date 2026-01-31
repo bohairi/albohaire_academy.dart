@@ -24,7 +24,7 @@ class CustomAchievCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Image.asset(modelAchievement.urlImage),
-                Center(child: Text(modelAchievement.title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),)),
+                Center(child: Text(modelAchievement.title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13),)),
                 Center(child: Text(modelAchievement.subtitle,style: TextStyle(fontSize: 13),))
               ],
             ),
