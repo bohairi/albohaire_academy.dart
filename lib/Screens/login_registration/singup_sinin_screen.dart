@@ -5,8 +5,8 @@ import 'package:buhairi_academy_application/Screens/login_registration/signup_sc
 import 'package:flutter/material.dart';
 
 class SingupSininScreen extends StatefulWidget {
-  ModelUsers modelUsers;
-  SingupSininScreen({super.key, required this.modelUsers});
+  // ModelUsers modelUsers;
+  // SingupSininScreen({super.key, required this.modelUsers});
 
   @override
   State<SingupSininScreen> createState() => _SingupSininScreenState();
@@ -21,8 +21,8 @@ class _SingupSininScreenState extends State<SingupSininScreen> with SingleTicker
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    currentUserName = widget.modelUsers.userName;
-    currentPassword = widget.modelUsers.userName;
+    // currentUserName = widget.modelUsers.userName;
+    // currentPassword = widget.modelUsers.userName;
   }
   @override
 void dispose() {

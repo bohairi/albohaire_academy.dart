@@ -5,12 +5,13 @@ import 'package:buhairi_academy_application/Screens/home/first_page.dart';
 import 'package:buhairi_academy_application/Screens/home/shop_page.dart';
 import 'package:buhairi_academy_application/Screens/home/ChatScreen.dart';
 import 'package:buhairi_academy_application/Screens/login_registration/model_users.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class Homepage extends StatefulWidget {
-  ModelUsers modelUsers;
-  Homepage({super.key, required this.modelUsers});
+  // ModelUsers modelUsers;
+  // Homepage({super.key, required this.modelUsers});
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -88,10 +89,13 @@ class _HomepageState extends State<Homepage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              drawerProfile(Icons.person, widget.modelUsers.fullName),
-              drawerProfile(Icons.calendar_month, widget.modelUsers.age),
-              drawerProfile(Icons.location_on, widget.modelUsers.location),
-              drawerProfile(Icons.password, widget.modelUsers.password)
+              // drawerProfile(Icons.person, widget.modelUsers.fullName),
+              // drawerProfile(Icons.calendar_month, widget.modelUsers.age),
+              // drawerProfile(Icons.location_on, widget.modelUsers.location),
+              // drawerProfile(Icons.password, widget.modelUsers.password),
+              IconButton(onPressed: (){
+                FirebaseAuth.instance.signOut();
+              }, icon: Icon(Icons.logout))
             ],
           ),
         ),

@@ -1,6 +1,8 @@
+import 'package:buhairi_academy_application/Screens/coach_system/coach_firstPage.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/contact/custom_contact.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/shop%20page/card_describe_shop.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/shop%20page/custom_card_shop.dart';
+import 'package:buhairi_academy_application/Screens/delivery_system/delivery_firstPage.dart';
 import 'package:buhairi_academy_application/Screens/home/first_page.dart';
 import 'package:buhairi_academy_application/Screens/home/homePage.dart';
 import 'package:buhairi_academy_application/Screens/home/shop_page.dart';
@@ -9,10 +11,20 @@ import 'package:buhairi_academy_application/Screens/customs_widget/custom_text_f
 import 'package:buhairi_academy_application/Screens/login_registration/signup_screen.dart';
 import 'package:buhairi_academy_application/Screens/login_registration/singup_sinin_screen.dart';
 import 'package:buhairi_academy_application/Screens/introduction/splash_screen.dart';
+import 'package:buhairi_academy_application/Screens/manager_system/manager_firstPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -21,11 +33,40 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SplashScreen(),
+      home: userState(),
       debugShowCheckedModeBanner: false,
     );
   }
+  StreamBuilder<User?> userState(){
+    return StreamBuilder(stream: FirebaseAuth.instance.authStateChanges(), builder: (context,snapshot){
+      if(snapshot.connectionState == ConnectionState.waiting){
+        return Center(child: CircularProgressIndicator(),);
+      }
+      else if(snapshot.hasData){
+        return FutureBuilder(future: FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).get(), builder: (context,roleSnapshot){
+          if(!roleSnapshot.hasData){
+            return Scaffold(body: Center(child: CircularProgressIndicator(),));
+          }
+          final role = roleSnapshot.data!["role"];
+          if(role == "user"){
+            return Homepage();
+          }
+          else if(role == "coach"){
+            return CoachFirstpage();
+          }
+          else if(role == "delivery"){
+            return DeliveryFirstpage();
+          }
+          else if(role == "manager"){
+            return ManagerFirstpage();
+          }
+          return Center(child: CircularProgressIndicator(),);
+        });
+      }
+      return SingupSininScreen();
+    });
+  }
 }
 
-class HomepageCardDescribeShop {
-}
+
+

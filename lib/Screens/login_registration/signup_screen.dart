@@ -4,7 +4,9 @@ import 'package:buhairi_academy_application/Screens/customs_widget/custom_text_f
 import 'package:buhairi_academy_application/Screens/login_registration/model_users.dart';
 import 'package:buhairi_academy_application/Screens/login_registration/signin_screen.dart';
 import 'package:buhairi_academy_application/Screens/login_registration/singup_sinin_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignupScreen extends StatefulWidget {
   final Function(String,String) onSignupSuccess;
@@ -15,6 +17,43 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+Future<void> addUser() {
+  return users
+    .doc(FirebaseAuth.instance.currentUser!.uid)
+    .set({
+      "email" : email.text,
+      "Full Name" : fullName.text,
+      "user name" : userName.text,
+      "age" : age.text,
+      "location": location.text,
+      "password" : password.text,
+      "role": "user"
+    })
+    .then((value) => print("User Added"))
+    .catchError((error) => print("Failed to add user: $error"));
+}
+  Future<String> signup() async{
+    try {
+  final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+    email: email.text,
+    password: password.text,
+  );
+  return "done";
+} on FirebaseAuthException catch (e) {
+  if (e.code == 'weak-password') {
+    return('The password provided is too weak.');
+  } else if (e.code == 'email-already-in-use') {
+    return('The account already exists for that email.');
+  }
+} catch (e) {
+  return (e.toString());
+}
+return "error";
+  }
+
+  final email = TextEditingController();
   final fullName = TextEditingController();
 
   final userName = TextEditingController();
@@ -38,6 +77,17 @@ class _SignupScreenState extends State<SignupScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              CustomTextFeild(name: "Email", lable: "email", hintText: "name@gmail.com", type: TextInputType.emailAddress, icon:  Icon(Icons.mail, color: Colors.white), controller: email, validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'please inter your email!';
+                  }
+
+
+                  if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
+                    return 'Please enter a valid email address';
+                  }
+                  return null; //  صحيح
+                }, obSecureText: false),
               CustomTextFeild(
                 obSecureText: false,
                 name: "Full Name",
@@ -160,6 +210,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 textButton: "S I G N U P",
                 onPressed: () {
                   if (_Formkey.currentState!.validate()) {
+                    signup();
+                    addUser();
                     final newUser = ModelUsers(fullName: fullName.text.trim(), userName: userName.text.trim(), age: age.text.trim(), location: location.text.trim(), password: password.text.trim());
                     users.add(newUser);
                     widget.onSignupSuccess(

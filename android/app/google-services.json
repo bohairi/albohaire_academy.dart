@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "197427760474",
+    "project_id": "buhaire-academy",
+    "storage_bucket": "buhaire-academy.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:197427760474:android:8ee267e805a3bdb433f763",
+        "android_client_info": {
+          "package_name": "com.example.buhairi_academy_application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFcifSkEfdByTbZPPO3rlwbf_P3vHbViw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

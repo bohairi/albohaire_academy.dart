@@ -15,7 +15,7 @@ class LoginRegister extends StatelessWidget {
     return GestureDetector(
       onVerticalDragUpdate: (details) {
         if(details.delta.dy < 0){
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> SingupSininScreen(modelUsers: users[0],)));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> SingupSininScreen()));
         }
       },
       child: Container(
