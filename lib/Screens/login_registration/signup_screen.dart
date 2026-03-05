@@ -17,11 +17,12 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  // final uid =  FirebaseAuth.instance.currentUser!.uid;
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-Future<void> addUser() {
+Future<void> addUser(String uid) {
   return users
-    .doc(FirebaseAuth.instance.currentUser!.uid)
+    .doc(uid)
     .set({
       "email" : email.text,
       "Full Name" : fullName.text,
@@ -29,14 +30,14 @@ Future<void> addUser() {
       "age" : age.text,
       "location": location.text,
       "password" : password.text,
-      "role": "user"
+      "role": "user",
     })
     .then((value) => print("User Added"))
     .catchError((error) => print("Failed to add user: $error"));
 }
   Future<String> signup() async{
     try {
-  final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+   final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
     email: email.text,
     password: password.text,
   );
@@ -211,7 +212,14 @@ return "error";
                 onPressed: () {
                   if (_Formkey.currentState!.validate()) {
                     signup();
-                    addUser();
+                    final uid =  FirebaseAuth.instance.currentUser!.uid;
+                    addUser(uid);
+                    email.clear();
+                    fullName.clear();
+                    userName.clear();
+                    age.clear();
+                    location.clear();
+                    password.clear();
                     final newUser = ModelUsers(fullName: fullName.text.trim(), userName: userName.text.trim(), age: age.text.trim(), location: location.text.trim(), password: password.text.trim());
                     users.add(newUser);
                     widget.onSignupSuccess(

@@ -127,19 +127,19 @@ class _SigninScreenState extends State<SigninScreen> {
                     );
                     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Homepage()));
                       }
-                      else if(doc["role"] == "coach"){
+                      else if(doc['role'] == "coach"){
                          ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Your informations are correct"))
                     );
                         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> CoachFirstpage()));
                       }
-                       else if(doc["role"] == "delivery"){
+                       else if(doc['role'] == "delivery"){
                          ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Your informations are correct"))
                     );
                         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> DeliveryFirstpage()));
                       }
-                       else if(doc["role"] == "manager"){
+                       else if(doc['role'] == "manager"){
                          ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Your informations are correct"))
                     );

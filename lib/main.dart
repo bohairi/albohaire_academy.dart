@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: userState(),
+      home: SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -43,11 +43,11 @@ class MyApp extends StatelessWidget {
         return Center(child: CircularProgressIndicator(),);
       }
       else if(snapshot.hasData){
-        return FutureBuilder(future: FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).get(), builder: (context,roleSnapshot){
+        return FutureBuilder(future: FirebaseFirestore.instance.collection("users").doc(snapshot.data!.uid).get(), builder: (context,roleSnapshot){
           if(!roleSnapshot.hasData){
             return Scaffold(body: Center(child: CircularProgressIndicator(),));
           }
-          final role = roleSnapshot.data!["role"];
+          final role = roleSnapshot.data!['role'];
           if(role == "user"){
             return Homepage();
           }
