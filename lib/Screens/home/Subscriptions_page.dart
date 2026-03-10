@@ -14,7 +14,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        SubscriptionMainPage(),
+        // SubscriptionMainPage(),
         if(isShow) Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

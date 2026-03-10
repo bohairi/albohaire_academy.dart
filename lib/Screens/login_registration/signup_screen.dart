@@ -24,6 +24,7 @@ Future<void> addUser(String uid) {
   return users
     .doc(uid)
     .set({
+      "id" : uid,
       "email" : email.text,
       "Full Name" : fullName.text,
       "user name" : userName.text,
@@ -209,23 +210,24 @@ return "error";
               SizedBox(height: 10),
               CustomButtonLogin(
                 textButton: "S I G N U P",
-                onPressed: () {
+                onPressed: () async{
                   if (_Formkey.currentState!.validate()) {
-                    signup();
+                    await signup();
                     final uid =  FirebaseAuth.instance.currentUser!.uid;
                     addUser(uid);
                     email.clear();
                     fullName.clear();
                     userName.clear();
+                    password.clear();
                     age.clear();
                     location.clear();
-                    password.clear();
-                    final newUser = ModelUsers(fullName: fullName.text.trim(), userName: userName.text.trim(), age: age.text.trim(), location: location.text.trim(), password: password.text.trim());
-                    users.add(newUser);
-                    widget.onSignupSuccess(
-                      newUser.userName,
-                      newUser.password
-                    );
+                    // password.clear();
+                    // final newUser = ModelUsers(fullName: fullName.text.trim(), userName: userName.text.trim(), age: age.text.trim(), location: location.text.trim(), password: password.text.trim());
+                    // users.add(newUser);
+                    // widget.onSignupSuccess(
+                    //   newUser.userName,
+                    //   newUser.password
+                    // );
                   }
 
                 },

@@ -21,9 +21,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
 
@@ -32,41 +30,53 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SplashScreen(),
-      debugShowCheckedModeBanner: false,
+    return MaterialApp(home: userState(), debugShowCheckedModeBanner: false);
+  }
+
+  StreamBuilder<User?> userState() {
+    return StreamBuilder(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(body: Center(child: CircularProgressIndicator()));
+        } else if (snapshot.hasData) {
+          return FutureBuilder(
+            future:
+                FirebaseFirestore.instance
+                    .collection("users")
+                    .doc(snapshot.data!.uid)
+                    .get(),
+            builder: (context, roleSnapshot) {
+              if (!roleSnapshot.hasData) {
+                return Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              final doc = roleSnapshot.data!;
+
+              if (!doc.exists) {
+                return SingupSininScreen(); // أو صفحة إكمال التسجيل
+              }
+
+              final role = doc['role'];
+
+              if (role == "user") {
+                return Homepage();
+              } else if (role == "coach") {
+                return CoachFirstpage();
+              } else if (role == "delivery") {
+                return DeliveryFirstpage();
+              } else if (role == "manager") {
+                return ManagerFirstpage();
+              }
+
+              return SingupSininScreen();
+            },
+          );
+        }
+        return SingupSininScreen();
+      },
     );
   }
-  StreamBuilder<User?> userState(){
-    return StreamBuilder(stream: FirebaseAuth.instance.authStateChanges(), builder: (context,snapshot){
-      if(snapshot.connectionState == ConnectionState.waiting){
-        return Center(child: CircularProgressIndicator(),);
-      }
-      else if(snapshot.hasData){
-        return FutureBuilder(future: FirebaseFirestore.instance.collection("users").doc(snapshot.data!.uid).get(), builder: (context,roleSnapshot){
-          if(!roleSnapshot.hasData){
-            return Scaffold(body: Center(child: CircularProgressIndicator(),));
-          }
-          final role = roleSnapshot.data!['role'];
-          if(role == "user"){
-            return Homepage();
-          }
-          else if(role == "coach"){
-            return CoachFirstpage();
-          }
-          else if(role == "delivery"){
-            return DeliveryFirstpage();
-          }
-          else if(role == "manager"){
-            return ManagerFirstpage();
-          }
-          return Center(child: CircularProgressIndicator(),);
-        });
-      }
-      return SingupSininScreen();
-    });
-  }
 }
-
-
-

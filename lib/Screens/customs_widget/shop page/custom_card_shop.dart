@@ -16,7 +16,9 @@ class _CustomCardShopState extends State<CustomCardShop> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_)=> CardDescribeShop(modelCardShop: widget.modelCardShop))),
+      onTap: () {
+      },
+      // onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_)=> CardDescribeShop(modelCardShop: widget.modelCardShop))),
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.35,
         width: MediaQuery.of(context).size.width * 0.45,
@@ -44,12 +46,8 @@ class _CustomCardShopState extends State<CustomCardShop> {
                       ],
                     ),
                     InkWell(
-                      onTap: (){
-                        setState(() {
-                          widget.modelCardShop.flagFav = !widget.modelCardShop.flagFav;
-                        });
-                      },
-                      child: Icon(widget.modelCardShop.flagFav ? Icons.favorite : Icons.favorite_border,color: Colors.red,))
+                      onTap: widget.onTap,
+                      child: Icon(widget.modelCardShop.isfavorite ? Icons.favorite : Icons.favorite_border,color: Colors.red,))
                   ],
                 )
               ],

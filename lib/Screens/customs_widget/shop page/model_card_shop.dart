@@ -1,99 +1,111 @@
 import 'package:flutter/material.dart';
 
 class ModelCardShop {
+  String? id;
   String urlImage;
   String title;
   double price;
-  double bill;
-  int quantity;
-  IconData icon;
-  bool flagFav;
+  bool isfavorite;
+  // int quantity;
   String describe;
-  List <String> images;
-  ModelCardShop({required this.urlImage,required this.title,required this.price,required this.bill,required this.quantity, required this.icon,required this.flagFav, required this.describe, required this.images});
+  // List <String> images;
+  ModelCardShop({this.id,required this.urlImage,required this.title,required this.price ,this.isfavorite = false,required this.describe});
 
   ModelCardShop copyWith({
-  final String? urlImage,
-  final String? title,
-  final double? price,
-  final double? bill,
-  final int? quantity ,
-  final IconData? icon,
-  final bool? flagFav,
-  final String? describe,
-  final List <String>? images,
+  String? id,
+  String? urlImage,
+  String? title,
+  double? price,
+  bool? isfavorite,
+  String? describe,
   }){
-    return ModelCardShop(urlImage: urlImage ?? this.urlImage, title: title ?? this.title, price: price ?? this.price,bill: bill ?? this.bill,quantity: quantity?? this.quantity, icon: icon ?? this.icon, flagFav: flagFav ?? this.flagFav, describe: describe ?? this.describe, images: images ?? this.images);
+    return ModelCardShop(id: id?? this.id,urlImage: urlImage ?? this.urlImage, title: title ?? this.title, price: price ?? this.price,isfavorite: isfavorite?? this.isfavorite, describe: describe ?? this.describe);
   }
 
-
+//toMap
+Map<String,dynamic> toMap(){
+  return {
+    "id" : id,
+    "image" : urlImage,
+    "name" : title,
+    "price" : price,
+    "describe" : describe,
+    "isfavorite" : isfavorite
+  };
 }
 
-List<ModelCardShop> myCart = [];
-
-double getTotalBill() {
-  return myCart.fold(0, (sum, item) => sum + item.price);
+//fromMap
+factory ModelCardShop.fromMap(Map<String,dynamic> map, String cardId){
+  return ModelCardShop(id: cardId,urlImage: map["urlImage"]?? "", title: map["name"] ?? "", price: map["price"], describe: map["describe"]?? "");
+}
 }
 
-List <ModelCardShop> cards = [
-  ModelCardShop(urlImage: "assets/images/belts.jpeg", title: "All Belts", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
-    "assets/images/belts.jpeg",
-    "assets/images/belts.jpeg",
-    "assets/images/belts.jpeg",
-  ]),
-  ModelCardShop(urlImage: "assets/images/teakwondo-boy.png", title: "Teakwondo Suit", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways.", images: [
-    "assets/images/teakwondo-boy.png",
-    "assets/images/teakwondo-boy.png",
-    "assets/images/teakwondo-boy.png",
-  ]),
-  ModelCardShop(urlImage: "assets/images/teakwondo.png", title: "Protectors", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
-    "assets/images/teakwondo.png",
-    "assets/images/teakwondo.png",
-    "assets/images/teakwondo.png",
-  ]),
-  ModelCardShop(urlImage: "assets/images/logo.png", title: "Black Belt", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
-    "assets/images/logo.png",
-    "assets/images/logo.png",
-    "assets/images/logo.png",
-  ]),
-   ModelCardShop(urlImage: "assets/images/belts.jpeg", title: "All Belts", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
-    "assets/images/belts.jpeg",
-    "assets/images/belts.jpeg",
-    "assets/images/belts.jpeg",
-  ]),
-  ModelCardShop(urlImage: "assets/images/teakwondo-boy.png", title: "Teakwondo Suit", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways.", images: [
-    "assets/images/teakwondo-boy.png",
-    "assets/images/teakwondo-boy.png",
-    "assets/images/teakwondo-boy.png",
-  ]),
-  ModelCardShop(urlImage: "assets/images/teakwondo.png", title: "Protectors", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
-    "assets/images/teakwondo.png",
-    "assets/images/teakwondo.png",
-    "assets/images/teakwondo.png",
-  ]),
-  ModelCardShop(urlImage: "assets/images/logo.png", title: "Black Belt", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
-    "assets/images/logo.png",
-    "assets/images/logo.png",
-    "assets/images/logo.png",
-  ]),
-   ModelCardShop(urlImage: "assets/images/belts.jpeg", title: "All Belts", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
-    "assets/images/belts.jpeg",
-    "assets/images/belts.jpeg",
-    "assets/images/belts.jpeg",
-  ]),
-  ModelCardShop(urlImage: "assets/images/teakwondo-boy.png", title: "Teakwondo Suit", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways.", images: [
-    "assets/images/teakwondo-boy.png",
-    "assets/images/teakwondo-boy.png",
-    "assets/images/teakwondo-boy.png",
-  ]),
-  ModelCardShop(urlImage: "assets/images/teakwondo.png", title: "Protectors", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
-    "assets/images/teakwondo.png",
-    "assets/images/teakwondo.png",
-    "assets/images/teakwondo.png",
-  ]),
-  ModelCardShop(urlImage: "assets/images/logo.png", title: "Black Belt", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
-    "assets/images/logo.png",
-    "assets/images/logo.png",
-    "assets/images/logo.png",
-  ]),
-];
+
+// List<ModelCardShop> myCart = [];
+
+// double getTotalBill() {
+//   return myCart.fold(0, (sum, item) => sum + item.price);
+// }
+
+// List <ModelCardShop> cards = [
+//   ModelCardShop(urlImage: "assets/images/belts.jpeg", title: "All Belts", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
+//     "assets/images/belts.jpeg",
+//     "assets/images/belts.jpeg",
+//     "assets/images/belts.jpeg",
+//   ]),
+//   ModelCardShop(urlImage: "assets/images/teakwondo-boy.png", title: "Teakwondo Suit", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways.", images: [
+//     "assets/images/teakwondo-boy.png",
+//     "assets/images/teakwondo-boy.png",
+//     "assets/images/teakwondo-boy.png",
+//   ]),
+//   ModelCardShop(urlImage: "assets/images/teakwondo.png", title: "Protectors", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
+//     "assets/images/teakwondo.png",
+//     "assets/images/teakwondo.png",
+//     "assets/images/teakwondo.png",
+//   ]),
+//   ModelCardShop(urlImage: "assets/images/logo.png", title: "Black Belt", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
+//     "assets/images/logo.png",
+//     "assets/images/logo.png",
+//     "assets/images/logo.png",
+//   ]),
+//    ModelCardShop(urlImage: "assets/images/belts.jpeg", title: "All Belts", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
+//     "assets/images/belts.jpeg",
+//     "assets/images/belts.jpeg",
+//     "assets/images/belts.jpeg",
+//   ]),
+//   ModelCardShop(urlImage: "assets/images/teakwondo-boy.png", title: "Teakwondo Suit", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways.", images: [
+//     "assets/images/teakwondo-boy.png",
+//     "assets/images/teakwondo-boy.png",
+//     "assets/images/teakwondo-boy.png",
+//   ]),
+//   ModelCardShop(urlImage: "assets/images/teakwondo.png", title: "Protectors", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
+//     "assets/images/teakwondo.png",
+//     "assets/images/teakwondo.png",
+//     "assets/images/teakwondo.png",
+//   ]),
+//   ModelCardShop(urlImage: "assets/images/logo.png", title: "Black Belt", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
+//     "assets/images/logo.png",
+//     "assets/images/logo.png",
+//     "assets/images/logo.png",
+//   ]),
+//    ModelCardShop(urlImage: "assets/images/belts.jpeg", title: "All Belts", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
+//     "assets/images/belts.jpeg",
+//     "assets/images/belts.jpeg",
+//     "assets/images/belts.jpeg",
+//   ]),
+//   ModelCardShop(urlImage: "assets/images/teakwondo-boy.png", title: "Teakwondo Suit", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways.", images: [
+//     "assets/images/teakwondo-boy.png",
+//     "assets/images/teakwondo-boy.png",
+//     "assets/images/teakwondo-boy.png",
+//   ]),
+//   ModelCardShop(urlImage: "assets/images/teakwondo.png", title: "Protectors", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
+//     "assets/images/teakwondo.png",
+//     "assets/images/teakwondo.png",
+//     "assets/images/teakwondo.png",
+//   ]),
+//   ModelCardShop(urlImage: "assets/images/logo.png", title: "Black Belt", price: 12.3,bill: 0,quantity: 0, icon: Icons.favorite, flagFav: false, describe: "A cough is a sudden, reflexive action that helps clear the throat and airways. It may sound dry or deep, sometimes coming in short bursts, and can be triggered by dust, cold air, or irritation in the throat. Although often mild, it can be persistent and tiring if it lasts for a long time.", images: [
+//     "assets/images/logo.png",
+//     "assets/images/logo.png",
+//     "assets/images/logo.png",
+//   ]),
+// ];
