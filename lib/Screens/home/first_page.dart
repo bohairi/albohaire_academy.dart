@@ -4,6 +4,7 @@ import 'package:buhairi_academy_application/Screens/customs_widget/coaches/custo
 import 'package:buhairi_academy_application/Screens/customs_widget/contact/custom_contact.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/custom_home_card.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/schaduel/schedule_first_page.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:fan_carousel_image_slider/fan_carousel_image_slider.dart';
 
@@ -30,25 +31,70 @@ class _FirstPageState extends State<FirstPage> {
   void initState() {
     super.initState();
     boxes = [
-    CustomHomeCard(icon: Icons.sports_martial_arts, title: "Coaches",color: Colors.black,onTap: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (_)=> CustomCardCoach())),),
-    CustomHomeCard(icon: Icons.stairs_outlined, title: "Belt System", color: Colors.white, onTap: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (_)=> Belts())),),
-    CustomHomeCard(icon: Icons.emoji_events, title: "Achievements",color: const Color.fromARGB(255, 216, 161, 9),onTap: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (_)=> AchievementsFirstPage())),),
-    CustomHomeCard(icon: Icons.schedule, title: "Schedule", color: const Color.fromARGB(255, 157, 7, 7),onTap: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (_)=> ScheduleFirstPage())),),
-    CustomHomeCard(icon: Icons.contact_phone, title: "Contact Us", color: const Color.fromARGB(255, 121, 218, 124),onTap: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (_)=> CustomContact())),),
-  ];
-  filterdBoxes = boxes;
-  }  
+      CustomHomeCard(
+        icon: Icons.sports_martial_arts,
+        title: "Coaches",
+        color: Colors.black,
+        onTap:
+            () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => CustomCardCoach())),
+      ),
+      CustomHomeCard(
+        icon: Icons.stairs_outlined,
+        title: "Belt System",
+        color: Colors.white,
+        onTap:
+            () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => Belts())),
+      ),
+      CustomHomeCard(
+        icon: Icons.emoji_events,
+        title: "Achievements",
+        color: const Color.fromARGB(255, 216, 161, 9),
+        onTap:
+            () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => AchievementsFirstPage())),
+      ),
+      CustomHomeCard(
+        icon: Icons.schedule,
+        title: "Schedule",
+        color: const Color.fromARGB(255, 157, 7, 7),
+        onTap:
+            () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => ScheduleFirstPage())),
+      ),
+      CustomHomeCard(
+        icon: Icons.contact_phone,
+        title: "Contact Us",
+        color: const Color.fromARGB(255, 121, 218, 124),
+        onTap:
+            () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => CustomContact())),
+      ),
+    ];
+    filterdBoxes = boxes;
+  }
 
-  searchInEditText(String value){
+  searchInEditText(String value) {
     setState(() {
-      if(value.isEmpty){
+      if (value.isEmpty) {
         filterdBoxes = boxes;
-      }
-      else{
-        filterdBoxes = boxes.where((c)=> c.title.toLowerCase().contains(value.toLowerCase())).toList();
+      } else {
+        filterdBoxes =
+            boxes
+                .where(
+                  (c) => c.title.toLowerCase().contains(value.toLowerCase()),
+                )
+                .toList();
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -62,23 +108,39 @@ class _FirstPageState extends State<FirstPage> {
               color: Colors.white,
               child: TextField(
                 onChanged: (value) {
-                    searchInEditText(value);
+                  searchInEditText(value);
                 },
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search, size: 30),
                   hintText: "Search",
+                  
                   border: OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
-            SizedBox(height: 10),
-            FanCarouselImageSlider.sliderType1(
-              imagesLink: sampleImages,
-              isAssets: true,
-              autoPlay: true,
-              sliderHeight: MediaQuery.of(context).size.height * 0.25,
-              imageFitMode: BoxFit.fill,
-              showIndicator: false,
+            SizedBox(height: 5),
+            CarouselSlider(
+              options: CarouselOptions(
+                height: MediaQuery.of(context).size.height * 0.4,
+                viewportFraction: 1.0,
+                autoPlay: true,
+                autoPlayInterval: const Duration(seconds: 2),
+                autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                enlargeCenterPage: false,
+              ),
+              items: sampleImages.map((imagePath) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Image.asset(
+            imagePath,
+            fit: BoxFit.contain,
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
             ),
             GridView.builder(
               shrinkWrap: true,

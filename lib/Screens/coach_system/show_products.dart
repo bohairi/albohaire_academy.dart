@@ -8,7 +8,7 @@ class ShowProducts extends StatefulWidget {
   @override
   State<ShowProducts> createState() => _ShowProductsState();
 }
-
+// assets/images/belts.jpeg
 class _ShowProductsState extends State<ShowProducts> {
   TextEditingController name = TextEditingController();
   TextEditingController price = TextEditingController();

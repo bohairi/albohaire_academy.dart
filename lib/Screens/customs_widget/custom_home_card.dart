@@ -19,14 +19,18 @@ class CustomHomeCard extends StatelessWidget {
            height: MediaQuery.of(context).size.height * 0.15,
           child: InkWell(
             onTap: onTap,
-            child: Card(
-              color: Colors.blue,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, color: color,size: 50,),
-                  Text(title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: color),)
-                ],
+            child: Material(
+              elevation: 8,
+              borderRadius: BorderRadius.circular(12),
+              child: Card(
+                color: Colors.blue,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(icon, color: color,size: 50,),
+                    Text(title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: color),)
+                  ],
+                ),
               ),
             ),
           ),

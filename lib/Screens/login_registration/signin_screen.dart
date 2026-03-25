@@ -1,5 +1,6 @@
 import 'package:buhairi_academy_application/Customs/Colors.dart';
 import 'package:buhairi_academy_application/Screens/coach_system/coach_firstPage.dart';
+import 'package:buhairi_academy_application/Screens/coach_system/coach_options.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/custom_button_Login.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/custom_text_feild.dart';
 import 'package:buhairi_academy_application/Screens/delivery_system/delivery_firstPage.dart';
@@ -132,7 +133,7 @@ class _SigninScreenState extends State<SigninScreen> {
                          ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Your informations are correct"))
                     );
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> CoachFirstpage()));
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> CoachOptions()));
                       }
                        else if(doc['role'] == "delivery"){
                          ScaffoldMessenger.of(context).showSnackBar(
@@ -158,6 +159,7 @@ class _SigninScreenState extends State<SigninScreen> {
               SizedBox(height: 10,),
               CustomButtonLogin(textButton: "SIGNIN with GOOGLE", onPressed: (){
                 signInWithGoogle();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Homepage()));
               })
             ],
           ),

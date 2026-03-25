@@ -8,8 +8,6 @@ class Splash_Color {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Colors.grey.shade500,
-      Colors.grey.shade600,
       Colors.grey.shade700,
       Colors.grey.shade800,
       Colors.grey.shade900,

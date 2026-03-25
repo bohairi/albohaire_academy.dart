@@ -12,13 +12,11 @@ class CustomCardShop extends StatefulWidget {
 }
 
 class _CustomCardShopState extends State<CustomCardShop> {
-
+// assets/images/belts.jpeg
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-      },
-      // onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_)=> CardDescribeShop(modelCardShop: widget.modelCardShop))),
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_)=> CardDescribeShop(modelCardShop: widget.modelCardShop))),
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.35,
         width: MediaQuery.of(context).size.width * 0.45,
@@ -30,9 +28,9 @@ class _CustomCardShopState extends State<CustomCardShop> {
               children: [
                 Expanded(
                   flex: 4,
-                  child: Image.asset(widget.modelCardShop.urlImage,
-                  width: double.infinity,
-                  fit: BoxFit.contain,),
+                  child: Image.network(widget.modelCardShop.urlImage,
+                  height: 75,
+                fit: BoxFit.fill,),
                 ),
                 SizedBox(height: 5,),
                 Text(widget.modelCardShop.title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,),),

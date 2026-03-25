@@ -18,7 +18,7 @@ class AchievementsDescribe extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 children: [
-                  Image.asset(modelAchievement.urlImage,
+                  Image.network(modelAchievement.urlImage,
                   height: MediaQuery.of(context).size.height * 0.35,
                   width: MediaQuery.of(context).size.width,
                   ),

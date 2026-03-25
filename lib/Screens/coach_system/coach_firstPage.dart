@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:buhairi_academy_application/Screens/coach_system/show_products.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/shop%20page/model_card_shop.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CoachFirstpage extends StatefulWidget {
   CoachFirstpage({super.key});
@@ -12,8 +16,9 @@ class CoachFirstpage extends StatefulWidget {
 }
 
 class _CoachFirstpageState extends State<CoachFirstpage> {
-  TextEditingController image = TextEditingController();
-
+  XFile? img;
+  final storageRef = FirebaseStorage.instance.ref();
+  String? urlImage;
   TextEditingController title = TextEditingController();
 
   TextEditingController price = TextEditingController();
@@ -29,6 +34,7 @@ class _CoachFirstpageState extends State<CoachFirstpage> {
         backgroundColor: Colors.blue,
         title: Text("add products",style: TextStyle(color: Colors.white),),
         centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             onPressed: () {
@@ -53,13 +59,47 @@ class _CoachFirstpageState extends State<CoachFirstpage> {
           ],
         ),
         child: Column(children: [
-          customTextField(image, "image"),
-          customTextField(title, "name of product"),
-          customTextField(price, "price"),
-          customTextField(describe, "describe the product"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () async {
+                  ImagePicker imagePicker = ImagePicker();
+                  img = await imagePicker.pickImage(
+                    source: ImageSource.gallery,
+                  );
+                  final imageRef = storageRef.child(img!.name);
+                  await imageRef.putFile(File(img!.path));
+                  urlImage = await imageRef.getDownloadURL();
+                  setState(() {});
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                child: Text(
+                  "Upload Image",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              Container(
+                height: 40,
+                width: 140,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: BoxBorder.all(),
+                ),
+                child: Center(
+                  child: Text(
+                    img != null ? img!.name.substring(0, 10) : "No image selected",
+                  ),
+                ),
+              ),
+            ],
+          ),
+          customTextField(title, "name of product",2),
+          customTextField(price, "price",2),
+          customTextField(describe, "describe the product",5),
           SizedBox(height: 10,),
           ElevatedButton(onPressed: ()async{
-            ModelCardShop newProduct =  ModelCardShop(id: "", urlImage: image.text, title: title.text, price: double.parse(price.text), describe: describe.text);
+            ModelCardShop newProduct =  ModelCardShop(id: "", urlImage: urlImage!, title: title.text, price: double.parse(price.text), describe: describe.text);
             setState(() {
               isLoading = true;
             });
@@ -67,7 +107,6 @@ class _CoachFirstpageState extends State<CoachFirstpage> {
             setState(() {
               isLoading = false;
             });
-            image.clear();
             title.clear();
             price.clear();
             describe.clear();
@@ -92,10 +131,11 @@ class _CoachFirstpageState extends State<CoachFirstpage> {
     );
   }
 
-  Widget customTextField(TextEditingController controller, String hint) {
+  Widget customTextField(TextEditingController controller, String hint,int maxlines) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
+        maxLines: maxlines,
         controller: controller,
         decoration: InputDecoration(
           hintText: hint,

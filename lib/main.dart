@@ -1,4 +1,5 @@
 import 'package:buhairi_academy_application/Screens/coach_system/coach_firstPage.dart';
+import 'package:buhairi_academy_application/Screens/coach_system/coach_options.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/contact/custom_contact.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/shop%20page/card_describe_shop.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/shop%20page/custom_card_shop.dart';
@@ -12,6 +13,7 @@ import 'package:buhairi_academy_application/Screens/login_registration/signup_sc
 import 'package:buhairi_academy_application/Screens/login_registration/singup_sinin_screen.dart';
 import 'package:buhairi_academy_application/Screens/introduction/splash_screen.dart';
 import 'package:buhairi_academy_application/Screens/manager_system/manager_firstPage.dart';
+import 'package:buhairi_academy_application/Screens/upload_image/upload_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -64,7 +66,7 @@ class MyApp extends StatelessWidget {
               if (role == "user") {
                 return Homepage();
               } else if (role == "coach") {
-                return CoachFirstpage();
+                return CoachOptions();
               } else if (role == "delivery") {
                 return DeliveryFirstpage();
               } else if (role == "manager") {

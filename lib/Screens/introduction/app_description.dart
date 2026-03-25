@@ -43,21 +43,24 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "self-confidence, ",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
                         text: "physical strength, and ",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
                         text: "discipline.\n",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
 
@@ -69,7 +72,8 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "endurance, ",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
@@ -80,7 +84,8 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "goal ",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
@@ -91,14 +96,16 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "healthy ",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
                         text: "lifestyle.\n",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
 
@@ -110,14 +117,16 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "energy, ",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
                         text: "mental focus",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
@@ -128,7 +137,8 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "fitness.",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                     ],
@@ -148,7 +158,8 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: " martial art",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
@@ -159,7 +170,8 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "all ages.\n",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
@@ -170,7 +182,8 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: " since the 1980s",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
@@ -187,7 +200,8 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "competitions",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
@@ -198,7 +212,8 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "national",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(text: " and ", style: TextStyle(fontSize: 17)),
@@ -206,7 +221,8 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "regional",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
@@ -230,7 +246,8 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "1981.\n",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
@@ -242,7 +259,8 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "Chen Hua",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                       TextSpan(
@@ -254,14 +272,15 @@ class _AppDescriptionState extends State<AppDescription> {
                         text: "1994.",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.bold,color: Colors.amber
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              LoginRegister()
+              LoginRegister(),
             ],
           ),
           Positioned(
@@ -274,6 +293,28 @@ class _AppDescriptionState extends State<AppDescription> {
                 children: [
                   InkWell(
                     onTap: () {
+                      controller.jumpToPage(3);
+                    },
+                    child: Text(
+                      flag ? "" : "S K I P",
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SmoothPageIndicator(
+                    controller: controller, // PageController
+                    count: 4,
+                    effect: WormEffect(
+                      activeDotColor: Colors.amber,
+                      dotColor: const Color.fromARGB(255, 167, 165, 165),
+                    ), // your preferred effect
+                    onDotClicked: (index) {},
+                  ),
+                  InkWell(
+                    onTap: () {
                       controller.nextPage(
                         duration: Duration(microseconds: 300),
                         curve: Curves.bounceIn,
@@ -284,25 +325,8 @@ class _AppDescriptionState extends State<AppDescription> {
 
                       style: TextStyle(
                         fontSize: 17,
-                        fontWeight: FontWeight.bold,color: Colors.white
-                      ),
-                    ),
-                  ),
-                  SmoothPageIndicator(
-                    controller: controller, // PageController
-                    count: 4,
-                    effect: WormEffect(activeDotColor: Colors.amber,dotColor: const Color.fromARGB(255, 167, 165, 165)), // your preferred effect
-                    onDotClicked: (index) {},
-                  ),
-                  InkWell(
-                    onTap: () {
-                      controller.jumpToPage(3);
-                    },
-                    child: Text( flag?
-                      "" : "S K I P",
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,color: Colors.white
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ),

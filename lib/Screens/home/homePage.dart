@@ -5,6 +5,7 @@ import 'package:buhairi_academy_application/Screens/home/first_page.dart';
 import 'package:buhairi_academy_application/Screens/home/shop_page.dart';
 import 'package:buhairi_academy_application/Screens/home/ChatScreen.dart';
 import 'package:buhairi_academy_application/Screens/login_registration/model_users.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -16,55 +17,74 @@ class Homepage extends StatefulWidget {
   @override
   State<Homepage> createState() => _HomepageState();
 }
+
 class _HomepageState extends State<Homepage> {
-  List <Widget> bottomBar = [
-    Icon(Icons.home,color: Colors.black,),
-    Icon(Icons.shopping_bag,color: Colors.black),
-    Icon(Icons.credit_card,color: Colors.black),
-    Icon(Icons.sports_martial_arts,color: Colors.black),
+  final email = FirebaseAuth.instance.currentUser!.email;
+  List<Widget> bottomBar = [
+    Icon(Icons.home, color: Colors.black),
+    Icon(Icons.shopping_bag, color: Colors.black),
+    Icon(Icons.credit_card, color: Colors.black),
+    Icon(Icons.sports_martial_arts, color: Colors.black),
   ];
 
-  List <Widget> pages = [
+  List<Widget> pages = [
     FirstPage(),
     ShopPage(),
     SubscriptionPage(),
-    ChatScreen()
+    ChatScreen(),
   ];
 
   int index = 0;
 
-  drawerProfile(IconData icon , String title){
+  drawerProfile(IconData icon, String title) {
     return ListTile(
-      leading: Icon(icon,color: Colors.blue,size: 25,),
-      title: Text(title,style: TextStyle(fontSize: 20,color: Colors.black,fontWeight: FontWeight.bold),),
+      leading: Icon(icon, color: Colors.blue, size: 25),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Splash_Color.login_reg,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        automaticallyImplyActions:false ,
+        automaticallyImplyActions: false,
         toolbarHeight: 90,
         backgroundColor: Splash_Color.login_reg,
         centerTitle: true,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Builder(builder: (BuildContext innerContext){
-              return GestureDetector(
-                onTap: () => Scaffold.of(innerContext).openDrawer(),
-                child: Icon(Icons.person,color: Colors.blue,),
-              );
-            }),
-          Image.asset("assets/images/logo_white.png",width: 100,height: 100,fit: BoxFit.contain,),
-          Builder(builder: (BuildContext innerContext){
-              return GestureDetector(
-                onTap: () => Scaffold.of(innerContext).openEndDrawer(),
-                child: Icon(Icons.favorite,color: Colors.blue,),
-              );
-            }),
+            Builder(
+              builder: (BuildContext innerContext) {
+                return GestureDetector(
+                  onTap: () => Scaffold.of(innerContext).openDrawer(),
+                  child: Icon(Icons.person, color: Colors.blue),
+                );
+              },
+            ),
+            Image.asset(
+              "assets/images/logo_white.png",
+              width: 100,
+              height: 100,
+              fit: BoxFit.contain,
+            ),
+            Builder(
+              builder: (BuildContext innerContext) {
+                return GestureDetector(
+                  onTap: () => Scaffold.of(innerContext).openEndDrawer(),
+                  child: Icon(Icons.favorite, color: Colors.blue),
+                );
+              },
+            ),
           ],
         ),
         // title: ListTile(
@@ -74,7 +94,7 @@ class _HomepageState extends State<Homepage> {
         //       onTap: () => Scaffold.of(innerContext).openDrawer(),
         //       child: Icon(Icons.person,color: Colors.blue,));},
         //   ),
-          // title: Image.asset("assets/images/logo_white.png",width: 50,height: 50,fit: BoxFit.contain,),
+        // title: Image.asset("assets/images/logo_white.png",width: 50,height: 50,fit: BoxFit.contain,),
         //   trailing: Builder(
         //     builder: (BuildContext innerContext){
         //       return GestureDetector(
@@ -89,34 +109,43 @@ class _HomepageState extends State<Homepage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // drawerProfile(Icons.person, widget.modelUsers.fullName),
+              drawerProfile(Icons.person, nameFromEmail(email)),
               // drawerProfile(Icons.calendar_month, widget.modelUsers.age),
               // drawerProfile(Icons.location_on, widget.modelUsers.location),
               // drawerProfile(Icons.password, widget.modelUsers.password),
-              IconButton(onPressed: (){
-                FirebaseAuth.instance.signOut();
-              }, icon: Icon(Icons.logout))
+              IconButton(
+                onPressed: () {
+                  FirebaseAuth.instance.signOut();
+                },
+                icon: Icon(Icons.logout),
+              ),
             ],
           ),
         ),
       ),
-      endDrawer: Drawer(
-        child: FavoriteDrawer()
-      ),
+      endDrawer: Drawer(child: FavoriteDrawer()),
       body: pages[index],
       bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
-          iconTheme: IconThemeData(color: Colors.white)
+        data: Theme.of(
+          context,
+        ).copyWith(iconTheme: IconThemeData(color: Colors.white)),
+        child: CurvedNavigationBar(
+          items: bottomBar.map((e) => e).toList(),
+          onTap:
+              (value) => setState(() {
+                index = value;
+              }),
+          backgroundColor: Colors.transparent,
+          animationDuration: Duration(milliseconds: 300),
+          color: Colors.blue,
+          buttonBackgroundColor: Colors.amber,
         ),
-        child: CurvedNavigationBar(items: bottomBar.map((e) => e).toList(),
-        onTap: (value) => setState(() {
-          index = value;
-        }),
-        backgroundColor: Colors.transparent,
-        animationDuration: Duration(milliseconds: 300),
-        color: Colors.blue,
-        buttonBackgroundColor: Colors.amber,),
       ),
     );
+  }
+  String nameFromEmail(String? email){
+    int index = email!.indexOf("@");
+    String name = email.substring(0,index);
+    return name;
   }
 }
