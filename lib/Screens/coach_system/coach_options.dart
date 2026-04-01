@@ -1,4 +1,6 @@
+import 'package:buhairi_academy_application/Screens/coach_system/coach_addCoach.dart';
 import 'package:buhairi_academy_application/Screens/coach_system/coach_add_achievements.dart';
+import 'package:buhairi_academy_application/Screens/coach_system/coach_add_schaduale.dart';
 import 'package:buhairi_academy_application/Screens/coach_system/coach_firstPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +35,12 @@ class _CoachOptionsState extends State<CoachOptions> {
             }),
             customOption("Add Achievement", (){
               Navigator.push(context, MaterialPageRoute(builder: (context)=> CoachAddAchievements()));
+            }),
+            customOption("Add Coach", (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> CoachAddcoach()));
+            }),
+            customOption("Add Schaduale", (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> CoachAddSchaduale()));
             })
           ],
         ),

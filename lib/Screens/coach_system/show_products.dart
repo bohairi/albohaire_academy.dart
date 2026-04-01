@@ -108,24 +108,30 @@ class _ShowProductsState extends State<ShowProducts> {
     );
   }
   Widget productCard(ModelCardShop card,Widget edit, Widget delete){
-    return Card(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              SizedBox(width: 15,),
-              Text(card.title),
-              SizedBox(width: 15,),
-              Text("${card.price}")
-            ],
-          ),
-          Row(
-            children: [
-              edit,delete
-            ],
-          )
-        ],
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.25,
+      width: double.infinity,
+      child: Card(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                SizedBox(width: 15,),
+                Image.network(card.urlImage,width: 60,height: 60,fit: BoxFit.fill,),
+                SizedBox(width: 15,),
+                Text(card.title),
+                SizedBox(width: 15,),
+                Text("${card.price}")
+              ],
+            ),
+            Row(
+              children: [
+                edit,delete
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

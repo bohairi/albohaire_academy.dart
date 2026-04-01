@@ -1,35 +1,33 @@
 import 'dart:io';
 
-import 'package:buhairi_academy_application/Screens/coach_system/show_achievements.dart';
-import 'package:buhairi_academy_application/Screens/customs_widget/achievements/model_achievement.dart';
+import 'package:buhairi_academy_application/Screens/coach_system/show_coaches.dart';
+import 'package:buhairi_academy_application/Screens/customs_widget/coaches/model_coach.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class CoachAddAchievements extends StatefulWidget {
-  const CoachAddAchievements({super.key});
+class CoachAddcoach extends StatefulWidget {
+  const CoachAddcoach({super.key});
 
   @override
-  State<CoachAddAchievements> createState() => _CoachAddAchievementsState();
+  State<CoachAddcoach> createState() => _CoachAddcoachState();
 }
 
-class _CoachAddAchievementsState extends State<CoachAddAchievements> {
-  String imageName = "";
+class _CoachAddcoachState extends State<CoachAddcoach> {
+  TextEditingController name = TextEditingController();
+  TextEditingController level = TextEditingController();
+  TextEditingController describe = TextEditingController();
   XFile? img;
   String? urlImage;
   final storageRef = FirebaseStorage.instance.ref();
   bool isLoading = false;
-  TextEditingController title = TextEditingController();
-  TextEditingController subtitle = TextEditingController();
-  TextEditingController describe = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    imageName = img != null ? img!.name.substring(0, 10) : "No image selected";
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Achievement", style: TextStyle(color: Colors.white)),
+        title: Text("Add Coach", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.blue,
         iconTheme: IconThemeData(color: Colors.white),
@@ -55,7 +53,7 @@ class _CoachAddAchievementsState extends State<CoachAddAchievements> {
                     img = await imagePicker.pickImage(
                       source: ImageSource.gallery,
                     );
-                    final imageRef = storageRef.child(img!.name);
+                    final imageRef = storageRef.child("coaches/${img!.name}");
                     await imageRef.putFile(File(img!.path));
                     urlImage = await imageRef.getDownloadURL();
                     setState(() {});
@@ -75,58 +73,43 @@ class _CoachAddAchievementsState extends State<CoachAddAchievements> {
                   ),
                   child: Center(
                     child: Text(
-                      imageName,
+                      img != null ? img!.name.substring(0, 10) : "No image selected",
                     ),
                   ),
                 ),
               ],
             ),
-            customTextField(title, "Title", 2),
-            customTextField(subtitle, "Subtitle", 2),
+            customTextField(name, "Name", 2),
+            customTextField(level, "Level Dan", 2),
             customTextField(describe, "Describe", 5),
-            customButton(
-              nameOf: "Add Post",
-              onPressed: () async {
-                ModelAchievement newPost = ModelAchievement(
-                  urlImage: urlImage!,
-                  title: title.text,
-                  subtitle: subtitle.text,
-                  describe: describe.text,
-                );
-                setState(() {
-                  isLoading = true;
-                });
-                await addAchievements(newPost);
-                setState(() {
-                  isLoading = false;
-                });
-                title.clear();
-                subtitle.clear();
-                describe.clear();
-              },
-            ),
-            customButton(
-              nameOf: "Show Achievements",
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ShowAchievements()),
-                );
-              },
-            ),
+            customButton(nameOf: "Add Coach", onPressed: () async{
+              ModelCoach newCoach = ModelCoach(urlImage: urlImage!, name: name.text, level: level.text, describe: describe.text);
+              setState(() {
+                isLoading = true;
+              });
+              await addCoach(newCoach);
+              setState(() {
+                isLoading = false;
+              });
+              name.clear();
+              level.clear();
+              describe.clear();
+            }),
+            customButton(nameOf: "Show Coaches", onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> ShowCoaches()));
+            })
           ],
         ),
       ),
     );
   }
-
-  Future<void> addAchievements(ModelAchievement newPost) async {
-    final docRef = FirebaseFirestore.instance.collection("achievements").doc();
-    newPost = newPost.copyWith(id: docRef.id);
-    await docRef.set(newPost.toMap());
+  Future<void> addCoach(ModelCoach newCoach) async {
+    final docRef = FirebaseFirestore.instance.collection("Coaches").doc();
+    newCoach = newCoach.copyWith(id: docRef.id);
+    await docRef.set(newCoach.toMap());
   }
 
-  Widget customTextField(
+ Widget customTextField(
     TextEditingController controller,
     String hint,
     int maxlines,

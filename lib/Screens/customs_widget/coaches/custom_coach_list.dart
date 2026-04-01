@@ -18,7 +18,7 @@ class CustomCoachList extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5)
           ), 
-          leading: Image.asset(modelCoach.urlImage),
+          leading: Image.network(modelCoach.urlImage),
           title: Text(modelCoach.name, style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
           subtitle: Text(modelCoach.level,style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
         ),

@@ -36,7 +36,7 @@ Map<String,dynamic> toMap(){
 
 //fromMap
 factory ModelCardShop.fromMap(Map<String,dynamic> map, String cardId){
-  return ModelCardShop(id: cardId,urlImage: map["urlImage"]?? "", title: map["name"] ?? "", price: map["price"], describe: map["describe"]?? "");
+  return ModelCardShop(id: cardId,urlImage: map["image"]?? "", title: map["name"] ?? "", price: map["price"], describe: map["describe"]?? "");
 }
 }
 

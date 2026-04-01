@@ -17,6 +17,8 @@ class ShowAchievements extends StatefulWidget {
 }
 
 class _ShowAchievementsState extends State<ShowAchievements> {
+  final _formKey = GlobalKey<FormState>();
+  bool isUploadRed =false;
   XFile? img;
   String? urlImage;
   String nameImage ="";
@@ -41,7 +43,9 @@ class _ShowAchievementsState extends State<ShowAchievements> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text("There is no Data"));
+            return Center(child: Text("There is no Data",style: TextStyle(
+              color: isUploadRed? Colors.red :  Colors.black
+            ),));
           }
           final Posts =
               snapshot.data!.docs
@@ -154,9 +158,17 @@ class _ShowAchievementsState extends State<ShowAchievements> {
                                   ),
                                 ],
                               ),
-                              customTextField("Title", title, 1),
-                              customTextField("Subtitle", subtitle, 1),
-                              customTextField("describe", describe, 4),
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: [
+                                    customTextField("Title", title, 1),
+                                customTextField("Subtitle", subtitle, 1),
+                                customTextField("describe", describe, 3),
+                                  ],
+                                ),
+                              )
+                              
                             ],
                           ),
                           actions: [
@@ -175,7 +187,9 @@ class _ShowAchievementsState extends State<ShowAchievements> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    if(_formKey.currentState!.validate()){
+                                      if(img!.name.isNotEmpty){
+                                         Navigator.pop(context);
                                     FirebaseFirestore.instance
                                         .collection("achievements")
                                         .doc(Posts[index].id)
@@ -189,6 +203,15 @@ class _ShowAchievementsState extends State<ShowAchievements> {
                                     title.clear();
                                     subtitle.clear();
                                     describe.clear();
+                                      }
+                                      else{
+                                        isUploadRed = true;
+                                        setState(() {
+                                        });
+                                      }
+                                     
+                                    }
+
                                   },
                                   child: Text("Edit"),
                                 ),
@@ -216,7 +239,12 @@ class _ShowAchievementsState extends State<ShowAchievements> {
   ) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextField(
+      child: TextFormField(
+        validator: (value) {
+          if(value == null || value.isEmpty){
+            return "fill the feild";
+          }
+        },
         maxLines: maxlines,
         controller: controller,
         decoration: InputDecoration(

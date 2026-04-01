@@ -32,7 +32,7 @@ class _CoachFirstpageState extends State<CoachFirstpage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text("add products",style: TextStyle(color: Colors.white),),
+        title: Text("add products", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         actions: [
@@ -40,7 +40,7 @@ class _CoachFirstpageState extends State<CoachFirstpage> {
             onPressed: () {
               FirebaseAuth.instance.signOut();
             },
-            icon: Icon(Icons.logout,color: Colors.white,),
+            icon: Icon(Icons.logout, color: Colors.white),
           ),
         ],
       ),
@@ -58,80 +58,125 @@ class _CoachFirstpageState extends State<CoachFirstpage> {
             ),
           ],
         ),
-        child: Column(children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: () async {
-                  ImagePicker imagePicker = ImagePicker();
-                  img = await imagePicker.pickImage(
-                    source: ImageSource.gallery,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    ImagePicker imagePicker = ImagePicker();
+                    img = await imagePicker.pickImage(
+                      source: ImageSource.gallery,
+                    );
+                    if (img == null) return; // ✅ مهم
+
+                    final imageRef = storageRef.child(img!.name);
+                    await imageRef.putFile(File(img!.path));
+                    urlImage = await imageRef.getDownloadURL();
+                    setState(() {});
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  child: Text(
+                    "Upload Image",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                Container(
+                  height: 40,
+                  width: 140,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: BoxBorder.all(),
+                  ),
+                  child: Center(
+                    child: Text(
+                      img != null
+                          ? img!.name.substring(0, 10)
+                          : "No image selected",
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            customTextField(title, "name of product", 2),
+            customTextField(price, "price", 2),
+            customTextField(describe, "describe the product", 5),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                if (urlImage == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Please upload image first")),
                   );
-                  final imageRef = storageRef.child(img!.name);
-                  await imageRef.putFile(File(img!.path));
-                  urlImage = await imageRef.getDownloadURL();
-                  setState(() {});
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  return;
+                }
+                ModelCardShop newProduct = ModelCardShop(
+                  id: "",
+                  urlImage: urlImage!,
+                  title: title.text,
+                  price: double.parse(price.text),
+                  describe: describe.text,
+                );
+                setState(() {
+                  isLoading = true;
+                });
+                await addProduct(newProduct);
+                setState(() {
+                  isLoading = false;
+                });
+                title.clear();
+                price.clear();
+                describe.clear();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(12),
+                ),
+              ),
+              child:
+                  isLoading
+                      ? CircularProgressIndicator()
+                      : Center(
+                        child: Text(
+                          "Add Product",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+            ),
+            SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ShowProducts()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(12),
+                ),
+              ),
+              child: Center(
                 child: Text(
-                  "Upload Image",
+                  "Show Products",
                   style: TextStyle(color: Colors.white),
                 ),
               ),
-              Container(
-                height: 40,
-                width: 140,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: BoxBorder.all(),
-                ),
-                child: Center(
-                  child: Text(
-                    img != null ? img!.name.substring(0, 10) : "No image selected",
-                  ),
-                ),
-              ),
-            ],
-          ),
-          customTextField(title, "name of product",2),
-          customTextField(price, "price",2),
-          customTextField(describe, "describe the product",5),
-          SizedBox(height: 10,),
-          ElevatedButton(onPressed: ()async{
-            ModelCardShop newProduct =  ModelCardShop(id: "", urlImage: urlImage!, title: title.text, price: double.parse(price.text), describe: describe.text);
-            setState(() {
-              isLoading = true;
-            });
-            await addProduct(newProduct);
-            setState(() {
-              isLoading = false;
-            });
-            title.clear();
-            price.clear();
-            describe.clear();
-          }, child: isLoading ?  CircularProgressIndicator() : Center(child: Text("Add Product",style: TextStyle(color: Colors.white),)) ,style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadiusGeometry.circular(12)
-            )
-          )),
-          SizedBox(height: 5,),
-          ElevatedButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ShowProducts()));
-          },style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadiusGeometry.circular(12)
-            )
-          ), child: Center(child: Text("Show Products",style: TextStyle(color: Colors.white),)))
-        ],
-       ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget customTextField(TextEditingController controller, String hint,int maxlines) {
+  Widget customTextField(
+    TextEditingController controller,
+    String hint,
+    int maxlines,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
@@ -157,7 +202,7 @@ class _CoachFirstpageState extends State<CoachFirstpage> {
     );
   }
 
-  Future<void> addProduct(ModelCardShop product) async{
+  Future<void> addProduct(ModelCardShop product) async {
     final docRef = FirebaseFirestore.instance.collection("products").doc();
     product = product.copyWith(id: docRef.id);
     await docRef.set(product.toMap());

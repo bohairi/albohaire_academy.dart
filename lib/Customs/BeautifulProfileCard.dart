@@ -69,7 +69,7 @@ class BeautifulProfileCard extends StatelessWidget {
                 radius: 60,
                 backgroundColor: Colors.transparent,
                 child: ClipOval(
-                  child: Image.asset(
+                  child: Image.network(
                     imageUrl,
                     width: 150,
                     height: 150,

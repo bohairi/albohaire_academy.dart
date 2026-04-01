@@ -3,7 +3,7 @@ import 'package:buhairi_academy_application/Screens/customs_widget/schaduel/mode
 import 'package:flutter/material.dart';
 
 class CustomShaduleFirstPage extends StatelessWidget {
-  ModelSchaduale modelSchaduale;
+  ModelSchedule modelSchaduale;
   CustomShaduleFirstPage({super.key, required this.modelSchaduale});
 
   @override
@@ -12,7 +12,7 @@ class CustomShaduleFirstPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: InkWell(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder:(_) => CustomSchaduleSecondPage(table: tables[modelSchaduale.id]))) ,
+        // onTap: () => Navigator.of(context).push(MaterialPageRoute(builder:(_) => CustomSchaduleSecondPage(table: tables[modelSchaduale.id]))) ,
         child: ListTile(
           tileColor: Colors.white,
             shape: RoundedRectangleBorder(
