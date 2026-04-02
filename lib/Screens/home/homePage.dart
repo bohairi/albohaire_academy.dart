@@ -4,30 +4,29 @@ import 'package:buhairi_academy_application/Screens/home/Subscriptions_page.dart
 import 'package:buhairi_academy_application/Screens/home/first_page.dart';
 import 'package:buhairi_academy_application/Screens/home/shop_page.dart';
 import 'package:buhairi_academy_application/Screens/home/ChatScreen.dart';
-import 'package:buhairi_academy_application/Screens/login_registration/model_users.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class Homepage extends StatefulWidget {
-  // ModelUsers modelUsers;
-  // Homepage({super.key, required this.modelUsers});
+  const Homepage({super.key});
 
   @override
   State<Homepage> createState() => _HomepageState();
 }
 
 class _HomepageState extends State<Homepage> {
-  final email = FirebaseAuth.instance.currentUser!.email;
-  List<Widget> bottomBar = [
+  final String uid = FirebaseAuth.instance.currentUser!.uid;
+
+  List<Widget> bottomBar = const [
     Icon(Icons.home, color: Colors.black),
     Icon(Icons.shopping_bag, color: Colors.black),
     Icon(Icons.credit_card, color: Colors.black),
     Icon(Icons.sports_martial_arts, color: Colors.black),
   ];
 
-  List<Widget> pages = [
+  List<Widget> pages =  [
     FirstPage(),
     ShopPage(),
     SubscriptionPage(),
@@ -36,17 +35,96 @@ class _HomepageState extends State<Homepage> {
 
   int index = 0;
 
-  drawerProfile(IconData icon, String title) {
+  Widget drawerProfileRow(IconData icon, String title) {
     return ListTile(
-      leading: Icon(icon, color: Colors.blue, size: 25),
+      leading: Icon(icon, color: Colors.blue, size: 24),
       title: Text(
         title,
-        style: TextStyle(
-          fontSize: 20,
+        style: const TextStyle(
+          fontSize: 16,
           color: Colors.black,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
         ),
       ),
+    );
+  }
+
+  Widget buildUserDrawer() {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection("users").doc(uid).snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const Center(
+            child: Text("User data not found"),
+          );
+        }
+
+        final data = snapshot.data!.data() as Map<String, dynamic>;
+
+        final String fullName = data["Full Name"] ?? "No Name";
+        final String userName = data["user name"] ?? "No Username";
+        final String email = data["email"] ?? "No Email";
+        final String age = data["age"] ?? "No Age";
+        final String location = data["location"] ?? "No Location";
+        final String imageUrl = data["profileImage"] ?? "";
+
+        return SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                CircleAvatar(
+                  radius: 45,
+                  backgroundColor: Colors.blue.shade100,
+                  backgroundImage: imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+                  child: imageUrl.isEmpty
+                      ? const Icon(Icons.person, size: 45, color: Colors.blue)
+                      : null,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  fullName,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  "@$userName",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Divider(),
+                drawerProfileRow(Icons.email, email),
+                drawerProfileRow(Icons.cake, age),
+                drawerProfileRow(Icons.location_on, location),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.logout, color: Colors.red),
+                  title: const Text(
+                    "Logout",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -67,7 +145,7 @@ class _HomepageState extends State<Homepage> {
               builder: (BuildContext innerContext) {
                 return GestureDetector(
                   onTap: () => Scaffold.of(innerContext).openDrawer(),
-                  child: Icon(Icons.person, color: Colors.blue),
+                  child: const Icon(Icons.person, color: Colors.blue),
                 );
               },
             ),
@@ -81,71 +159,37 @@ class _HomepageState extends State<Homepage> {
               builder: (BuildContext innerContext) {
                 return GestureDetector(
                   onTap: () => Scaffold.of(innerContext).openEndDrawer(),
-                  child: Icon(Icons.favorite, color: Colors.blue),
+                  child: const Icon(Icons.favorite, color: Colors.blue),
                 );
               },
             ),
           ],
         ),
-        // title: ListTile(
-        //   leading: Builder(
-        //     builder: (BuildContext innerContext){
-        //       return GestureDetector(
-        //       onTap: () => Scaffold.of(innerContext).openDrawer(),
-        //       child: Icon(Icons.person,color: Colors.blue,));},
-        //   ),
-        // title: Image.asset("assets/images/logo_white.png",width: 50,height: 50,fit: BoxFit.contain,),
-        //   trailing: Builder(
-        //     builder: (BuildContext innerContext){
-        //       return GestureDetector(
-        //       onTap: () => Scaffold.of(innerContext).openEndDrawer(),
-        //       child: Icon(Icons.favorite,color: Colors.blue));},
-        //   ),
-        // ),
       ),
       drawer: Drawer(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              drawerProfile(Icons.person, nameFromEmail(email)),
-              // drawerProfile(Icons.calendar_month, widget.modelUsers.age),
-              // drawerProfile(Icons.location_on, widget.modelUsers.location),
-              // drawerProfile(Icons.password, widget.modelUsers.password),
-              IconButton(
-                onPressed: () {
-                  FirebaseAuth.instance.signOut();
-                },
-                icon: Icon(Icons.logout),
-              ),
-            ],
-          ),
-        ),
+        child: buildUserDrawer(),
       ),
-      endDrawer: Drawer(child: FavoriteDrawer()),
+      endDrawer: const Drawer(
+        child: FavoriteDrawer(),
+      ),
       body: pages[index],
       bottomNavigationBar: Theme(
-        data: Theme.of(
-          context,
-        ).copyWith(iconTheme: IconThemeData(color: Colors.white)),
+        data: Theme.of(context).copyWith(
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
         child: CurvedNavigationBar(
-          items: bottomBar.map((e) => e).toList(),
-          onTap:
-              (value) => setState(() {
-                index = value;
-              }),
+          items: bottomBar,
+          onTap: (value) {
+            setState(() {
+              index = value;
+            });
+          },
           backgroundColor: Colors.transparent,
-          animationDuration: Duration(milliseconds: 300),
+          animationDuration: const Duration(milliseconds: 300),
           color: Colors.blue,
           buttonBackgroundColor: Colors.amber,
         ),
       ),
     );
-  }
-  String nameFromEmail(String? email){
-    int index = email!.indexOf("@");
-    String name = email.substring(0,index);
-    return name;
   }
 }

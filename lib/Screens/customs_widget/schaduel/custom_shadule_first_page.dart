@@ -3,23 +3,66 @@ import 'package:buhairi_academy_application/Screens/customs_widget/schaduel/mode
 import 'package:flutter/material.dart';
 
 class CustomShaduleFirstPage extends StatelessWidget {
-  ModelSchedule modelSchaduale;
-  CustomShaduleFirstPage({super.key, required this.modelSchaduale});
+  final ModelSchedule modelSchaduale;
+
+  const CustomShaduleFirstPage({
+    super.key,
+    required this.modelSchaduale,
+  });
 
   @override
   Widget build(BuildContext context) {
-    
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(12.0),
       child: InkWell(
-        // onTap: () => Navigator.of(context).push(MaterialPageRoute(builder:(_) => CustomSchaduleSecondPage(table: tables[modelSchaduale.id]))) ,
-        child: ListTile(
-          tileColor: Colors.white,
-            shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5)
-          ), 
-          title: Center(child: Text(modelSchaduale.level, style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),)),
-          subtitle: Center(child: Text(modelSchaduale.title,style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
+        borderRadius: BorderRadius.circular(14),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => CustomSchaduleSecondPage(
+                modelSchedule: modelSchaduale,
+              ),
+            ),
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 10,
+            ),
+            title: Text(
+              modelSchaduale.level,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(
+                modelSchaduale.title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+          ),
         ),
       ),
     );

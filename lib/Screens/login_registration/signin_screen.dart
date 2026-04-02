@@ -1,11 +1,8 @@
-import 'package:buhairi_academy_application/Customs/Colors.dart';
-import 'package:buhairi_academy_application/Screens/coach_system/coach_firstPage.dart';
 import 'package:buhairi_academy_application/Screens/coach_system/coach_options.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/custom_button_Login.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/custom_text_feild.dart';
 import 'package:buhairi_academy_application/Screens/delivery_system/delivery_firstPage.dart';
 import 'package:buhairi_academy_application/Screens/home/homePage.dart';
-import 'package:buhairi_academy_application/Screens/login_registration/model_users.dart';
 import 'package:buhairi_academy_application/Screens/manager_system/manager_firstPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,174 +10,275 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class SigninScreen extends StatefulWidget {
-  ModelUsers modelUsers;
-  // String name;
-  // int age;
-  // String location;
-  SigninScreen({super.key,required this.modelUsers});
+  final String? initialEmail;
+  final String? initialPassword;
+
+  const SigninScreen({
+    super.key,
+    this.initialEmail,
+    this.initialPassword,
+  });
 
   @override
   State<SigninScreen> createState() => _SigninScreenState();
 }
 
 class _SigninScreenState extends State<SigninScreen> {
-  Future<String> login() async{
-    try {
-  final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-    email: email.text,
-    password: passwordSignin.text
-  );
-  return "done";
-} on FirebaseAuthException catch (e) {
-  if (e.code == 'user-not-found') {
-    return('No user found for that email.');
-  } else if (e.code == 'wrong-password') {
-    return('Wrong password provided for that user.');
-  }
-}
-  return "error";
-  }
-
   final email = TextEditingController();
   final userNameSignin = TextEditingController();
-
   final passwordSignin = TextEditingController();
 
-  final _Formkey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+
   bool flagVisibility = true;
+  bool isLoading = false;
+  bool isGoogleLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    email.text = widget.initialEmail ?? "";
+    passwordSignin.text = widget.initialPassword ?? "";
+  }
+
+  Future<String> login() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email.text.trim(),
+        password: passwordSignin.text.trim(),
+      );
+      return "done";
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        return 'No user found for that email.';
+      } else if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        return 'Wrong email or password.';
+      } else if (e.code == 'invalid-email') {
+        return 'Invalid email format.';
+      } else if (e.code == 'too-many-requests') {
+        return 'Too many attempts. Try again later.';
+      }
+      return e.message ?? "Login failed";
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<void> handleUserNavigation() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) {
+        showMessage("No logged in user found");
+        return;
+      }
+
+      final doc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUser.uid)
+          .get();
+
+      if (!doc.exists) {
+        showMessage("User data not found in Firestore");
+        return;
+      }
+
+      final data = doc.data();
+      if (data == null) {
+        showMessage("User data is empty");
+        return;
+      }
+
+      final role = data["role"];
+
+      if (role == null) {
+        showMessage("User role not found");
+        return;
+      }
+
+      showMessage("Your information is correct");
+
+      if (!mounted) return;
+
+      if (role == "user") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const Homepage()),
+        );
+      } else if (role == "coach") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const CoachOptions()),
+        );
+      } else if (role == "delivery") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const DeliveryFirstpage()),
+        );
+      } else if (role == "manager") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const ManagerFirstpage()),
+        );
+      } else {
+        showMessage("Unknown role: $role");
+      }
+    } catch (e) {
+      showMessage("Error while reading user data: $e");
+    }
+  }
+
+  void showMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _Formkey,
+          key: _formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CustomTextFeild(name: "Email", lable: "email", hintText: "name@gmail.com", type: TextInputType.emailAddress, icon:  Icon(Icons.mail, color: Colors.white), controller: email, validator: (value) {
+              CustomTextFeild(
+                name: "Email",
+                lable: "email",
+                hintText: "name@gmail.com",
+                type: TextInputType.emailAddress,
+                icon: const Icon(Icons.mail, color: Colors.white),
+                controller: email,
+                validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'please inter your email!';
+                    return 'Please enter your email';
                   }
 
-
-                  if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
+                  if (!RegExp(
+                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                  ).hasMatch(value.trim())) {
                     return 'Please enter a valid email address';
                   }
-                  return null; //  صحيح
-                }, obSecureText: false),
-              // CustomTextFeild(
-              //   obSecureText: false,
-              //     name: "User Name",
-              //     lable: "user name",
-              //     hintText: "User Name",
-              //     type: TextInputType.text,
-              //     icon: Icon(Icons.person, color: Colors.white),
-              //     controller: userNameSignin,
-              //     validator: (value) {
-              //       if (value == null || value.trim().isEmpty) {
-              //         return "please inter your user name";
-              //       }
-              //       if (!RegExp(r'^[A-Za-z\u0600-\u06FF]').hasMatch(value)) {
-              //         return 'The text must start with a letter';
-              //       }
-              //       return null;
-              //     },
-              //   ),
-                CustomTextFeild(
-                  obSecureText: flagVisibility,
-                  name: "Password",
-                  lable: "password",
-                  hintText: "Strong password",
-                  type: TextInputType.text,
-                  icon: InkWell(
-                    onTap: () => setState(() {
+
+                  return null;
+                },
+                obSecureText: false,
+              ),
+
+              CustomTextFeild(
+                obSecureText: flagVisibility,
+                name: "Password",
+                lable: "password",
+                hintText: "Strong password",
+                type: TextInputType.text,
+                icon: InkWell(
+                  onTap: () {
+                    setState(() {
                       flagVisibility = !flagVisibility;
-                    }),
-                    child:flagVisibility? Icon(Icons.visibility_off, color: Colors.white) : Icon(Icons.visibility, color: Colors.white) ),
-                  controller: passwordSignin,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'please write your password!';
-                    }
-            
-                    final strongPasswordRegex = RegExp(
-                      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~%^]).{8,}$',
-                    );
-            
-                    if (!strongPasswordRegex.hasMatch(value)) {
-                      return 'Use at least 8 characters with uppercase, lowercase, number, and special character';
-                    }
-                    
-                    return null; // ✔ Strong
+                    });
                   },
+                  child: flagVisibility
+                      ? const Icon(Icons.visibility_off, color: Colors.white)
+                      : const Icon(Icons.visibility, color: Colors.white),
                 ),
-                SizedBox(height: 20),
-              CustomButtonLogin(
-                textButton: "S I G N I N",
-                onPressed: () async{
-                  if (_Formkey.currentState!.validate()) {
-                    String result = await login();
-                    if(result == "done"){
-                      final doc = await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).get();
-                      if(doc['role'] == "user"){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Your informations are correct"))
-                    );
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Homepage()));
-                      }
-                      else if(doc['role'] == "coach"){
-                         ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Your informations are correct"))
-                    );
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> CoachOptions()));
-                      }
-                       else if(doc['role'] == "delivery"){
-                         ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Your informations are correct"))
-                    );
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> DeliveryFirstpage()));
-                      }
-                       else if(doc['role'] == "manager"){
-                         ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Your informations are correct"))
-                    );
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> ManagerFirstpage()));
-                      }
-                    }
+                controller: passwordSignin,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please write your password';
                   }
-                  else{
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Your informations are uncorrect!"))
-                    );
+                  return null;
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              CustomButtonLogin(
+                textButton: isLoading ? "LOADING..." : "S I G N I N",
+                onPressed: () async {
+                  if (!_formKey.currentState!.validate()) {
+                    showMessage("Your information is incorrect");
+                    return;
+                  }
+
+                  setState(() {
+                    isLoading = true;
+                  });
+
+                  final result = await login();
+
+                  if (result == "done") {
+                    await handleUserNavigation();
+                  } else {
+                    showMessage(result);
+                  }
+
+                  if (mounted) {
+                    setState(() {
+                      isLoading = false;
+                    });
                   }
                 },
               ),
-              SizedBox(height: 10,),
-              CustomButtonLogin(textButton: "SIGNIN with GOOGLE", onPressed: (){
-                signInWithGoogle();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Homepage()));
-              })
+
+              const SizedBox(height: 10),
+
+              CustomButtonLogin(
+                textButton: isGoogleLoading
+                    ? "LOADING..."
+                    : "SIGN IN WITH GOOGLE",
+                onPressed: () async {
+                  try {
+                    setState(() {
+                      isGoogleLoading = true;
+                    });
+
+                    final userCredential = await signInWithGoogle();
+
+                    if (userCredential.user == null) {
+                      showMessage("Google sign-in failed");
+                    } else {
+                      await handleUserNavigation();
+                    }
+                  } catch (e) {
+                    showMessage("Google sign-in error: $e");
+                  } finally {
+                    if (mounted) {
+                      setState(() {
+                        isGoogleLoading = false;
+                      });
+                    }
+                  }
+                },
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
   Future<UserCredential> signInWithGoogle() async {
-  // Trigger the authentication flow
-  final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-  // Obtain the auth details from the request
-  final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    if (googleUser == null) {
+      throw Exception("Google sign-in was cancelled");
+    }
 
-  // Create a new credential
-  final credential = GoogleAuthProvider.credential(
-    accessToken: googleAuth?.accessToken,
-    idToken: googleAuth?.idToken,
-  );
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
 
-  // Once signed in, return the UserCredential
-  return await FirebaseAuth.instance.signInWithCredential(credential);
-}
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  @override
+  void dispose() {
+    email.dispose();
+    userNameSignin.dispose();
+    passwordSignin.dispose();
+    super.dispose();
+  }
 }
