@@ -25,7 +25,6 @@ class SigninScreen extends StatefulWidget {
 
 class _SigninScreenState extends State<SigninScreen> {
   final email = TextEditingController();
-  final userNameSignin = TextEditingController();
   final passwordSignin = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
@@ -33,6 +32,7 @@ class _SigninScreenState extends State<SigninScreen> {
   bool flagVisibility = true;
   bool isLoading = false;
   bool isGoogleLoading = false;
+  bool isResetLoading = false;
 
   @override
   void initState() {
@@ -96,8 +96,6 @@ class _SigninScreenState extends State<SigninScreen> {
         return;
       }
 
-      showMessage("Your information is correct");
-
       if (!mounted) return;
 
       if (role == "user") {
@@ -124,10 +122,152 @@ class _SigninScreenState extends State<SigninScreen> {
     }
   }
 
+  Future<void> createGoogleUserIfNeeded(User user) async {
+    final userDoc =
+        FirebaseFirestore.instance.collection("users").doc(user.uid);
+
+    final docSnapshot = await userDoc.get();
+
+    if (!docSnapshot.exists) {
+      await userDoc.set({
+        "id": user.uid,
+        "email": user.email ?? "",
+        "fullName": user.displayName ?? "",
+        "userName": user.displayName ?? "",
+        "phoneNumber": "",
+        "dateOfBirth": "",
+        "age": null,
+        "address": "",
+        "latitude": null,
+        "longitude": null,
+        "role": "user",
+        "profileImage": user.photoURL ?? "",
+        "createdAt": FieldValue.serverTimestamp(),
+        "authProvider": "google",
+      });
+    }
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
+      throw Exception("Google sign-in was cancelled");
+    }
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  Future<void> signInWithGoogleAndPrepareUser() async {
+    final userCredential = await signInWithGoogle();
+    final user = userCredential.user;
+
+    if (user == null) {
+      showMessage("Google sign-in failed");
+      return;
+    }
+
+    await createGoogleUserIfNeeded(user);
+    await handleUserNavigation();
+  }
+
+  Future<void> resetPassword() async {
+    final currentEmail = email.text.trim();
+
+    if (currentEmail.isEmpty) {
+      showMessage("Please enter your email first");
+      return;
+    }
+
+    if (!RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    ).hasMatch(currentEmail)) {
+      showMessage("Please enter a valid email address");
+      return;
+    }
+
+    try {
+      setState(() {
+        isResetLoading = true;
+      });
+
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: currentEmail);
+
+      showMessage("Password reset link sent to your email");
+    } on FirebaseAuthException catch (e) {
+      showMessage(e.message ?? "Failed to send reset email");
+    } catch (e) {
+      showMessage("Error: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          isResetLoading = false;
+        });
+      }
+    }
+  }
+
   void showMessage(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
+    );
+  }
+
+  Widget buildGoogleButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: OutlinedButton.icon(
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: Colors.white54),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          backgroundColor: Colors.white.withOpacity(0.06),
+        ),
+        onPressed: isGoogleLoading
+            ? null
+            : () async {
+                try {
+                  setState(() {
+                    isGoogleLoading = true;
+                  });
+
+                  await signInWithGoogleAndPrepareUser();
+                } catch (e) {
+                  showMessage("Google sign-in error: $e");
+                } finally {
+                  if (mounted) {
+                    setState(() {
+                      isGoogleLoading = false;
+                    });
+                  }
+                }
+              },
+        icon: isGoogleLoading
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.login, color: Colors.white),
+        label: Text(
+          isGoogleLoading ? "LOADING..." : "CONTINUE WITH GOOGLE",
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
     );
   }
 
@@ -189,7 +329,20 @@ class _SigninScreenState extends State<SigninScreen> {
                 },
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
+
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: isResetLoading ? null : resetPassword,
+                  child: Text(
+                    isResetLoading ? "Sending..." : "Forgot Password?",
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 10),
 
               CustomButtonLogin(
                 textButton: isLoading ? "LOADING..." : "S I G N I N",
@@ -219,36 +372,35 @@ class _SigninScreenState extends State<SigninScreen> {
                 },
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 14),
 
-              CustomButtonLogin(
-                textButton: isGoogleLoading
-                    ? "LOADING..."
-                    : "SIGN IN WITH GOOGLE",
-                onPressed: () async {
-                  try {
-                    setState(() {
-                      isGoogleLoading = true;
-                    });
-
-                    final userCredential = await signInWithGoogle();
-
-                    if (userCredential.user == null) {
-                      showMessage("Google sign-in failed");
-                    } else {
-                      await handleUserNavigation();
-                    }
-                  } catch (e) {
-                    showMessage("Google sign-in error: $e");
-                  } finally {
-                    if (mounted) {
-                      setState(() {
-                        isGoogleLoading = false;
-                      });
-                    }
-                  }
-                },
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 1,
+                      color: Colors.white24,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      "OR",
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: 1,
+                      color: Colors.white24,
+                    ),
+                  ),
+                ],
               ),
+
+              const SizedBox(height: 14),
+
+              buildGoogleButton(),
             ],
           ),
         ),
@@ -256,28 +408,9 @@ class _SigninScreenState extends State<SigninScreen> {
     );
   }
 
-  Future<UserCredential> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    if (googleUser == null) {
-      throw Exception("Google sign-in was cancelled");
-    }
-
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
-
   @override
   void dispose() {
     email.dispose();
-    userNameSignin.dispose();
     passwordSignin.dispose();
     super.dispose();
   }

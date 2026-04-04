@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: userState(), debugShowCheckedModeBanner: false);
+    return MaterialApp(home: SplashScreen(), debugShowCheckedModeBanner: false);
   }
 
   StreamBuilder<User?> userState() {

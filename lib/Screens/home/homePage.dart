@@ -1,9 +1,10 @@
 import 'package:buhairi_academy_application/Customs/Colors.dart';
 import 'package:buhairi_academy_application/Screens/endDrawer.dart/favorite_drawer.dart';
+import 'package:buhairi_academy_application/Screens/home/ChatScreen.dart';
 import 'package:buhairi_academy_application/Screens/home/Subscriptions_page.dart';
 import 'package:buhairi_academy_application/Screens/home/first_page.dart';
 import 'package:buhairi_academy_application/Screens/home/shop_page.dart';
-import 'package:buhairi_academy_application/Screens/home/ChatScreen.dart';
+import 'package:buhairi_academy_application/Screens/home/chat_list_student.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class _HomepageState extends State<Homepage> {
     Icon(Icons.sports_martial_arts, color: Colors.black),
   ];
 
-  List<Widget> pages =  [
+  List<Widget> pages = [
     FirstPage(),
     ShopPage(),
     SubscriptionPage(),
@@ -65,12 +66,23 @@ class _HomepageState extends State<Homepage> {
 
         final data = snapshot.data!.data() as Map<String, dynamic>;
 
-        final String fullName = data["Full Name"] ?? "No Name";
-        final String userName = data["user name"] ?? "No Username";
-        final String email = data["email"] ?? "No Email";
-        final String age = data["age"] ?? "No Age";
-        final String location = data["location"] ?? "No Location";
-        final String imageUrl = data["profileImage"] ?? "";
+        final String fullName =
+            (data["fullName"] ?? data["Full Name"] ?? "No Name").toString();
+
+        final String userName =
+            (data["userName"] ?? data["user name"] ?? "No Username").toString();
+
+        final String email =
+            (data["email"] ?? "No Email").toString();
+
+        final String age =
+            data["age"] != null ? data["age"].toString() : "No Age";
+
+        final String location =
+            (data["address"] ?? data["location"] ?? "No Location").toString();
+
+        final String imageUrl =
+            (data["profileImage"] ?? "").toString();
 
         return SafeArea(
           child: SingleChildScrollView(
