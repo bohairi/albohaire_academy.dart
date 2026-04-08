@@ -15,20 +15,30 @@ class BeautifulProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 60),
+      margin: const EdgeInsets.only(top: 70),
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.topCenter,
         children: [
+          /// 🔥 Main Card
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(20, 70, 20, 25),
+            padding: const EdgeInsets.fromLTRB(20, 80, 20, 28),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(25),
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xff1565C0),
+                  Color(0xff42A5F5),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(28),
               boxShadow: [
                 BoxShadow(
-                  blurRadius: 15,
+                  color: Colors.black.withOpacity(0.12),
+                  blurRadius: 16,
+                  spreadRadius: 2,
                   offset: const Offset(0, 8),
                 ),
               ],
@@ -36,49 +46,81 @@ class BeautifulProfileCard extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                /// 🔥 Name
                 Text(
                   name,
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A1A),
+                    color: Colors.white,
                   ),
                 ),
+
                 const SizedBox(height: 12),
+
+                /// 🔥 Divider line
+                Container(
+                  height: 3,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                /// 🔥 Description
                 Text(
                   description,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15,
+                  style: const TextStyle(
+                    fontSize: 14.5,
                     height: 1.6,
-                    color: Colors.grey[700],
+                    color: Colors.white70,
                   ),
                 ),
               ],
             ),
           ),
+
+          /// 🔥 Profile Image
           Positioned(
-            top: -60,
+            top: -65,
             child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xff1565C0),
+                    Color(0xff42A5F5),
+                  ],
+                ),
               ),
               child: CircleAvatar(
-                radius: 60,
-                backgroundColor: Colors.transparent,
+                radius: 62,
+                backgroundColor: Colors.white,
                 child: ClipOval(
                   child: Image.network(
                     imageUrl,
-                    width: 150,
-                    height: 150,
-                    fit: BoxFit.contain, 
+                    width: 115,
+                    height: 115,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.person,
+                        size: 60,
+                        color: Colors.grey,
+                      );
+                    },
                   ),
                 ),
               ),
             ),
           ),
+
+
         ],
       ),
     );

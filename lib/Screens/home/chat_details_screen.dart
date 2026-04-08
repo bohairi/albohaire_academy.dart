@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 class ChatDetailsScreen extends StatefulWidget {
   final String chatId;
   final String chatTitle;
+  final String? otherUserImage;
 
   const ChatDetailsScreen({
     super.key,
     required this.chatId,
     required this.chatTitle,
+    this.otherUserImage,
   });
 
   @override
@@ -30,18 +32,20 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
     super.initState();
     loadCurrentUserName();
 
-    chatService.markMessagesAsRead(
-      chatId: widget.chatId,
-      currentUserId: currentUserId,
-    );
+    chatService
+        .markMessagesAsRead(chatId: widget.chatId, currentUserId: currentUserId)
+        .catchError((e) {
+          debugPrint("markMessagesAsRead error: $e");
+        });
   }
 
   Future<void> loadCurrentUserName() async {
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(currentUserId)
-          .get();
+      final doc =
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(currentUserId)
+              .get();
 
       if (!doc.exists) return;
 
@@ -49,12 +53,13 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
       if (data == null) return;
 
       setState(() {
-        currentUserName = (data["fullName"] ??
-                data["Full Name"] ??
-                data["userName"] ??
-                data["user name"] ??
-                "User")
-            .toString();
+        currentUserName =
+            (data["fullName"] ??
+                    data["Full Name"] ??
+                    data["userName"] ??
+                    data["user name"] ??
+                    "User")
+                .toString();
       });
     } catch (_) {}
   }
@@ -79,11 +84,29 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
         decoration: BoxDecoration(
-          color: isMe ? Colors.blue : Colors.grey.shade800,
-          borderRadius: BorderRadius.circular(14),
+          gradient:
+              isMe
+                  ? const LinearGradient(
+                    colors: [Color(0xff1565C0), Color(0xff42A5F5)],
+                  )
+                  : null,
+          color: isMe ? null : Colors.grey.shade200,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(18),
+            topRight: const Radius.circular(18),
+            bottomLeft: Radius.circular(isMe ? 18 : 4),
+            bottomRight: Radius.circular(isMe ? 4 : 18),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 6,
+              spreadRadius: 1,
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment:
@@ -95,7 +118,7 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
                 child: Text(
                   message.senderName,
                   style: const TextStyle(
-                    color: Colors.white70,
+                    color: Colors.black54,
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
@@ -103,7 +126,10 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
               ),
             Text(
               message.text,
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(
+                color: isMe ? Colors.white : Colors.black87,
+                fontSize: 14.5,
+              ),
             ),
           ],
         ),
@@ -111,11 +137,42 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
     );
   }
 
+  Widget buildChatAvatar() {
+    final imageUrl = (widget.otherUserImage ?? "").trim();
+
+    return CircleAvatar(
+      backgroundColor: Colors.white,
+      backgroundImage: imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+      child:
+          imageUrl.isEmpty
+              ? const Icon(Icons.person, color: Color(0xff1565C0))
+              : null,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xffF5F7FB),
       appBar: AppBar(
-        title: Text(widget.chatTitle),
+        elevation: 0,
+        backgroundColor: const Color(0xff1565C0),
+        title: Row(
+          children: [
+            buildChatAvatar(),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                widget.chatTitle,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -131,12 +188,15 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
 
                 if (messages.isEmpty) {
                   return const Center(
-                    child: Text("No messages yet"),
+                    child: Text(
+                      "Start the conversation 👋",
+                      style: TextStyle(fontSize: 16),
+                    ),
                   );
                 }
 
                 return ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     return buildMessageBubble(messages[index]);
@@ -147,24 +207,50 @@ class _ChatDetailsScreenState extends State<ChatDetailsScreen> {
           ),
           SafeArea(
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.fromLTRB(10, 6, 10, 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
               child: Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: messageController,
-                      decoration: InputDecoration(
-                        hintText: "Write a message...",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xffF1F5F9),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: TextField(
+                        controller: messageController,
+                        decoration: const InputDecoration(
+                          hintText: "Write a message...",
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: sendCurrentMessage,
-                    icon: const Icon(Icons.send),
+                  Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [Color(0xff1565C0), Color(0xff42A5F5)],
+                      ),
+                    ),
+                    child: IconButton(
+                      onPressed: sendCurrentMessage,
+                      icon: const Icon(Icons.send, color: Colors.white),
+                    ),
                   ),
                 ],
               ),

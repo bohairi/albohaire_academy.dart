@@ -4,7 +4,6 @@ import 'package:buhairi_academy_application/Screens/home/ChatScreen.dart';
 import 'package:buhairi_academy_application/Screens/home/Subscriptions_page.dart';
 import 'package:buhairi_academy_application/Screens/home/first_page.dart';
 import 'package:buhairi_academy_application/Screens/home/shop_page.dart';
-import 'package:buhairi_academy_application/Screens/home/chat_list_student.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,12 +19,7 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
-  List<Widget> bottomBar = const [
-    Icon(Icons.home, color: Colors.black),
-    Icon(Icons.shopping_bag, color: Colors.black),
-    Icon(Icons.credit_card, color: Colors.black),
-    Icon(Icons.sports_martial_arts, color: Colors.black),
-  ];
+  int index = 0;
 
   List<Widget> pages = [
     FirstPage(),
@@ -33,22 +27,6 @@ class _HomepageState extends State<Homepage> {
     SubscriptionPage(),
     ChatScreen(),
   ];
-
-  int index = 0;
-
-  Widget drawerProfileRow(IconData icon, String title) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.blue, size: 24),
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.black,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
 
   Widget buildUserDrawer() {
     return StreamBuilder<DocumentSnapshot>(
@@ -59,148 +37,167 @@ class _HomepageState extends State<Homepage> {
         }
 
         if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Center(
-            child: Text("User data not found"),
-          );
+          return const Center(child: Text("User data not found"));
         }
 
         final data = snapshot.data!.data() as Map<String, dynamic>;
 
-        final String fullName =
-            (data["fullName"] ?? data["Full Name"] ?? "No Name").toString();
-
-        final String userName =
-            (data["userName"] ?? data["user name"] ?? "No Username").toString();
-
-        final String email =
-            (data["email"] ?? "No Email").toString();
-
-        final String age =
-            data["age"] != null ? data["age"].toString() : "No Age";
-
-        final String location =
-            (data["address"] ?? data["location"] ?? "No Location").toString();
-
-        final String imageUrl =
-            (data["profileImage"] ?? "").toString();
+        final name = (data["fullName"] ?? "No Name").toString();
+        final username = (data["userName"] ?? "No Username").toString();
+        final email = (data["email"] ?? "No Email").toString();
+        final age = data["age"]?.toString() ?? "No Age";
+        final location = (data["address"] ?? "No Location").toString();
+        final imageUrl = (data["profileImage"] ?? "").toString();
 
         return SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                CircleAvatar(
-                  radius: 45,
-                  backgroundColor: Colors.blue.shade100,
-                  backgroundImage: imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
-                  child: imageUrl.isEmpty
-                      ? const Icon(Icons.person, size: 45, color: Colors.blue)
-                      : null,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  fullName,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                Text(
-                  "@$userName",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade700,
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 30),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xff1565C0),
+                      Color(0xff42A5F5),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 20),
-                const Divider(),
-                drawerProfileRow(Icons.email, email),
-                drawerProfileRow(Icons.cake, age),
-                drawerProfileRow(Icons.location_on, location),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.logout, color: Colors.red),
-                  title: const Text(
-                    "Logout",
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 45,
+                      backgroundColor: Colors.white,
+                      backgroundImage:
+                          imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+                      child: imageUrl.isEmpty
+                          ? const Icon(Icons.person, size: 40, color: Colors.blue)
+                          : null,
                     ),
-                  ),
-                  onTap: () async {
-                    await FirebaseAuth.instance.signOut();
-                  },
+                    const SizedBox(height: 10),
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "@$username",
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+
+              const SizedBox(height: 10),
+
+              drawerItem(Icons.email, email),
+              drawerItem(Icons.cake, age),
+              drawerItem(Icons.location_on, location),
+
+              const Divider(),
+
+              ListTile(
+                leading: const Icon(Icons.logout, color: Colors.red),
+                title: const Text(
+                  "Logout",
+                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                ),
+                onTap: () async {
+                  await FirebaseAuth.instance.signOut();
+                },
+              ),
+            ],
           ),
         );
       },
     );
   }
 
+  Widget drawerItem(IconData icon, String title) {
+    return ListTile(
+      leading: Icon(icon, color: const Color(0xff1565C0)),
+      title: Text(
+        title,
+        style: const TextStyle(fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Splash_Color.login_reg,
+      backgroundColor: const Color(0xffF5F7FB),
+
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        automaticallyImplyActions: false,
-        toolbarHeight: 90,
-        backgroundColor: Splash_Color.login_reg,
-        centerTitle: true,
+        elevation: 0,
+        backgroundColor: const Color(0xff1565C0),
+        toolbarHeight: 80,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Builder(
-              builder: (BuildContext innerContext) {
-                return GestureDetector(
-                  onTap: () => Scaffold.of(innerContext).openDrawer(),
-                  child: const Icon(Icons.person, color: Colors.blue),
-                );
-              },
+              builder: (context) => GestureDetector(
+                onTap: () => Scaffold.of(context).openDrawer(),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.person, color: Colors.white),
+                ),
+              ),
             ),
+
             Image.asset(
               "assets/images/logo_white.png",
-              width: 100,
-              height: 100,
-              fit: BoxFit.contain,
+              height: 60,
             ),
+
             Builder(
-              builder: (BuildContext innerContext) {
-                return GestureDetector(
-                  onTap: () => Scaffold.of(innerContext).openEndDrawer(),
-                  child: const Icon(Icons.favorite, color: Colors.blue),
-                );
-              },
+              builder: (context) => GestureDetector(
+                onTap: () => Scaffold.of(context).openEndDrawer(),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.favorite, color: Colors.white),
+                ),
+              ),
             ),
           ],
         ),
       ),
-      drawer: Drawer(
-        child: buildUserDrawer(),
+
+      drawer: Drawer(child: buildUserDrawer()),
+      endDrawer: const Drawer(child: FavoriteDrawer()),
+
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: pages[index],
       ),
-      endDrawer: const Drawer(
-        child: FavoriteDrawer(),
-      ),
-      body: pages[index],
-      bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
-          iconTheme: const IconThemeData(color: Colors.white),
-        ),
-        child: CurvedNavigationBar(
-          items: bottomBar,
-          onTap: (value) {
-            setState(() {
-              index = value;
-            });
-          },
-          backgroundColor: Colors.transparent,
-          animationDuration: const Duration(milliseconds: 300),
-          color: Colors.blue,
-          buttonBackgroundColor: Colors.amber,
-        ),
+
+      bottomNavigationBar: CurvedNavigationBar(
+        items: const [
+          Icon(Icons.home),
+          Icon(Icons.shopping_bag),
+          Icon(Icons.credit_card),
+          Icon(Icons.chat),
+        ],
+        onTap: (value) {
+          setState(() {
+            index = value;
+          });
+        },
+        backgroundColor: Colors.transparent,
+        color: const Color(0xff1565C0),
+        buttonBackgroundColor: const Color(0xffFFC107),
+        animationDuration: const Duration(milliseconds: 300),
       ),
     );
   }

@@ -3,7 +3,7 @@ import 'package:buhairi_academy_application/Screens/coach_system/coach_options.d
 import 'package:buhairi_academy_application/Screens/customs_widget/contact/custom_contact.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/shop%20page/card_describe_shop.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/shop%20page/custom_card_shop.dart';
-import 'package:buhairi_academy_application/Screens/delivery_system/delivery_firstPage.dart';
+import 'package:buhairi_academy_application/Screens/delivery_system/driver_students_page.dart';
 import 'package:buhairi_academy_application/Screens/home/first_page.dart';
 import 'package:buhairi_academy_application/Screens/home/homePage.dart';
 import 'package:buhairi_academy_application/Screens/home/shop_page.dart';
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: SplashScreen(), debugShowCheckedModeBanner: false);
+    return MaterialApp(home: userState(), debugShowCheckedModeBanner: false);
   }
 
   StreamBuilder<User?> userState() {
@@ -68,11 +68,10 @@ class MyApp extends StatelessWidget {
               } else if (role == "coach") {
                 return CoachOptions();
               } else if (role == "delivery") {
-                return DeliveryFirstpage();
+                return DriverStudentsPage();
               } else if (role == "manager") {
                 return ManagerFirstpage();
               }
-
               return SingupSininScreen();
             },
           );

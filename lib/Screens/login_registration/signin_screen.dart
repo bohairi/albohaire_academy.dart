@@ -1,7 +1,7 @@
 import 'package:buhairi_academy_application/Screens/coach_system/coach_options.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/custom_button_Login.dart';
 import 'package:buhairi_academy_application/Screens/customs_widget/custom_text_feild.dart';
-import 'package:buhairi_academy_application/Screens/delivery_system/delivery_firstPage.dart';
+import 'package:buhairi_academy_application/Screens/delivery_system/driver_students_page.dart';
 import 'package:buhairi_academy_application/Screens/home/homePage.dart';
 import 'package:buhairi_academy_application/Screens/manager_system/manager_firstPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,18 +43,44 @@ class _SigninScreenState extends State<SigninScreen> {
 
   Future<String> login() async {
     try {
+      final input = email.text.trim();
+      final password = passwordSignin.text.trim();
+
+      String finalEmail = input;
+
+      // إذا المستخدم كتب يوزرنيم بدل ايميل
+      if (!input.contains("@")) {
+        final query = await FirebaseFirestore.instance
+            .collection("users")
+            .where("userName", isEqualTo: input)
+            .limit(1)
+            .get();
+
+        if (query.docs.isEmpty) {
+          return "Username not found";
+        }
+
+        final data = query.docs.first.data();
+        finalEmail = (data["email"] ?? "").toString();
+
+        if (finalEmail.isEmpty) {
+          return "No email linked to this username";
+        }
+      }
+
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email.text.trim(),
-        password: passwordSignin.text.trim(),
+        email: finalEmail,
+        password: password,
       );
+
       return "done";
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        return 'No user found for that email.';
+        return 'No user found';
       } else if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
-        return 'Wrong email or password.';
+        return 'Wrong email/username or password';
       } else if (e.code == 'invalid-email') {
-        return 'Invalid email format.';
+        return 'Invalid email format';
       } else if (e.code == 'too-many-requests') {
         return 'Too many attempts. Try again later.';
       }
@@ -108,7 +134,7 @@ class _SigninScreenState extends State<SigninScreen> {
         );
       } else if (role == "delivery") {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const DeliveryFirstpage()),
+          MaterialPageRoute(builder: (context) => const DriverStudentsPage()),
         );
       } else if (role == "manager") {
         Navigator.of(context).pushReplacement(
@@ -180,16 +206,21 @@ class _SigninScreenState extends State<SigninScreen> {
   }
 
   Future<void> resetPassword() async {
-    final currentEmail = email.text.trim();
+    final currentInput = email.text.trim();
 
-    if (currentEmail.isEmpty) {
+    if (currentInput.isEmpty) {
       showMessage("Please enter your email first");
+      return;
+    }
+
+    if (!currentInput.contains("@")) {
+      showMessage("Password reset works with email only, not username");
       return;
     }
 
     if (!RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-    ).hasMatch(currentEmail)) {
+    ).hasMatch(currentInput)) {
       showMessage("Please enter a valid email address");
       return;
     }
@@ -199,7 +230,7 @@ class _SigninScreenState extends State<SigninScreen> {
         isResetLoading = true;
       });
 
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: currentEmail);
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: currentInput);
 
       showMessage("Password reset link sent to your email");
     } on FirebaseAuthException catch (e) {
@@ -282,23 +313,16 @@ class _SigninScreenState extends State<SigninScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomTextFeild(
-                name: "Email",
-                lable: "email",
-                hintText: "name@gmail.com",
-                type: TextInputType.emailAddress,
-                icon: const Icon(Icons.mail, color: Colors.white),
+                name: "Email / Username",
+                lable: "email or username",
+                hintText: "Enter email or username",
+                type: TextInputType.text,
+                icon: const Icon(Icons.person, color: Colors.white),
                 controller: email,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your email';
+                    return 'Please enter email or username';
                   }
-
-                  if (!RegExp(
-                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                  ).hasMatch(value.trim())) {
-                    return 'Please enter a valid email address';
-                  }
-
                   return null;
                 },
                 obSecureText: false,

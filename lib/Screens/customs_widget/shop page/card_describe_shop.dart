@@ -24,182 +24,236 @@ class _CardDescribeShopState extends State<CardDescribeShop> {
         : [widget.modelCardShop.urlImage];
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: const Color(0xffF5F7FB),
+
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: const Color(0xff1565C0),
         title: Text(widget.modelCardShop.title),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
+
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            /// 🔥 Image Slider
+            Stack(
               children: [
-                Stack(
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      child: PageView.builder(
-                        itemCount: images.length,
-                        onPageChanged: (index) {
-                          setState(() {
-                            currentIndex = index;
-                          });
-                        },
-                        itemBuilder: (context, index) {
-                          return Image.network(
+                Container(
+                  height: 300,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xff1565C0),
+                        Color(0xff42A5F5),
+                      ],
+                    ),
+                  ),
+                  child: PageView.builder(
+                    itemCount: images.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        currentIndex = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
                             images[index],
                             fit: BoxFit.contain,
-                          );
-                        },
-                      ),
-                    ),
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Text(
-                          "${currentIndex + 1} / ${images.length}",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
                           ),
                         ),
-                      ),
-                    ),
-                  ],
+                      );
+                    },
+                  ),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+
+                /// indicator
+                Positioned(
+                  bottom: 15,
+                  right: 20,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      "${currentIndex + 1}/${images.length}",
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            /// 🔥 Details Card
+            Container(
+              margin: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(26),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Price
+                  Row(
                     children: [
                       const Text(
                         "JOD ",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
                       ),
                       Text(
                         "${widget.modelCardShop.price}",
                         style: const TextStyle(
-                          fontSize: 20,
-                          fontFamily: "LoginSignup",
+                          fontSize: 26,
                           fontWeight: FontWeight.bold,
+                          color: Color(0xff1565C0),
                         ),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                Text(
-                  widget.modelCardShop.describe,
-                  style: const TextStyle(fontSize: 15),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Stack(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          height: 40,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
+
+                  const SizedBox(height: 12),
+
+                  /// Description
+                  Text(
+                    widget.modelCardShop.describe,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      height: 1.5,
+                      color: Color(0xff374151),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  /// Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
                             ),
-                            onPressed: () =>
-                                ShopFirebaseHelper.addToCart(widget.modelCardShop),
-                            child: const Text(
-                              "Add to cart",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                            backgroundColor: const Color(0xff1565C0),
+                            elevation: 4,
+                          ),
+                          onPressed: () =>
+                              ShopFirebaseHelper.addToCart(widget.modelCardShop),
+                          child: const Text(
+                            "Add to Cart",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ),
-                        Positioned(
-                          top: 4,
-                          left: 4,
-                          child: Container(
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          onPressed: () => ShopFirebaseHelper.removeOneFromCart(
+                              widget.modelCardShop),
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  /// Quantity Badge
+                  Row(
+                    children: [
+                      const Icon(Icons.shopping_cart,
+                          color: Color(0xff1565C0)),
+                      const SizedBox(width: 6),
+                      StreamBuilder<int>(
+                        stream: ShopFirebaseHelper.getProductQuantity(
+                          widget.modelCardShop.id!,
+                        ),
+                        builder: (context, snapshot) {
+                          final quantity = snapshot.data ?? 0;
+                          return Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
+                              horizontal: 10,
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.black54,
-                              borderRadius: BorderRadius.circular(15),
+                              color: const Color(0xff1565C0),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            child: StreamBuilder<int>(
-                              stream: ShopFirebaseHelper.getProductQuantity(
-                                widget.modelCardShop.id!,
-                              ),
-                              builder: (context, snapshot) {
-                                final quantity = snapshot.data ?? 0;
-                                return Text(
-                                  "$quantity",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ),
-                                );
-                              },
+                            child: Text(
+                              "$quantity in cart",
+                              style: const TextStyle(color: Colors.white),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 20),
-                    InkWell(
-                      onTap: () =>
-                          ShopFirebaseHelper.removeOneFromCart(widget.modelCardShop),
-                      child: const Icon(
-                        Icons.delete,
-                        color: Colors.grey,
-                        size: 35,
+                          );
+                        },
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(Icons.shopping_cart, color: Colors.blue),
-                    const Text(
-                      "JOD ",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    StreamBuilder<double>(
-                      stream: ShopFirebaseHelper.getTotalBill(),
-                      builder: (context, snapshot) {
-                        final total = snapshot.data ?? 0.0;
-                        return Text(
-                          total.toStringAsFixed(2),
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontFamily: "LoginSignup",
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  /// Total
+                  Row(
+                    children: [
+                      const Text(
+                        "Total: ",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Text(
+                        "JOD ",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      StreamBuilder<double>(
+                        stream: ShopFirebaseHelper.getTotalBill(),
+                        builder: (context, snapshot) {
+                          final total = snapshot.data ?? 0.0;
+                          return Text(
+                            total.toStringAsFixed(2),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff1565C0),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
