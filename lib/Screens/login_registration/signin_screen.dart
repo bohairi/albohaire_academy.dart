@@ -3,7 +3,6 @@ import 'package:buhairi_academy_application/Screens/customs_widget/custom_button
 import 'package:buhairi_academy_application/Screens/customs_widget/custom_text_feild.dart';
 import 'package:buhairi_academy_application/Screens/delivery_system/driver_students_page.dart';
 import 'package:buhairi_academy_application/Screens/home/homePage.dart';
-import 'package:buhairi_academy_application/Screens/manager_system/manager_firstPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -136,11 +135,8 @@ class _SigninScreenState extends State<SigninScreen> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const DriverStudentsPage()),
         );
-      } else if (role == "manager") {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const ManagerFirstpage()),
-        );
-      } else {
+      }
+       else {
         showMessage("Unknown role: $role");
       }
     } catch (e) {

@@ -12,7 +12,6 @@ import 'package:buhairi_academy_application/Screens/customs_widget/custom_text_f
 import 'package:buhairi_academy_application/Screens/login_registration/signup_screen.dart';
 import 'package:buhairi_academy_application/Screens/login_registration/singup_sinin_screen.dart';
 import 'package:buhairi_academy_application/Screens/introduction/splash_screen.dart';
-import 'package:buhairi_academy_application/Screens/manager_system/manager_firstPage.dart';
 import 'package:buhairi_academy_application/Screens/upload_image/upload_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -69,8 +68,6 @@ class MyApp extends StatelessWidget {
                 return CoachOptions();
               } else if (role == "delivery") {
                 return DriverStudentsPage();
-              } else if (role == "manager") {
-                return ManagerFirstpage();
               }
               return SingupSininScreen();
             },

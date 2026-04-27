@@ -47,24 +47,10 @@ flutter:
     - assets/animations/Fist Bump.json
     - assets/images/logo_white.png
     - assets/animations/Scroll down.json
-    - assets/images/Screenshot 2025-12-30 150159.png
-    - assets/images/Screenshot 2025-12-30 150417.png
-    - assets/images/Screenshot 2025-12-30 150449.png
-    - assets/images/Screenshot 2025-12-30 150505.png
-    - assets/images/Screenshot 2025-12-30 150527.png
-    - assets/images/captin_ahmad.png
-    - assets/images/captin_bra'.png
-    - assets/images/captin_hamza.png
-    - assets/images/captin_laila.png
-    - assets/images/captin_mohammad.png
-    - assets/images/captin_oday.png
-    - assets/images/captin_rama.png
-    - assets/images/captin_yousef.png
     - assets/animations/Facebook.json
     - assets/animations/Instagram.json
     - assets/animations/whatsapp_loop.json
     - assets/animations/Phone Call.json
-    - assets/images/belts.jpeg
 
   fonts:
     - family: welcomeText
